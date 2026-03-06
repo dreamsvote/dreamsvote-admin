@@ -37,4 +37,10 @@ function initChart() {
     })
 }
 
+function logout() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('login-page').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+        }
+
 document.addEventListener('DOMContentLoaded', init)
