@@ -1,11 +1,14 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/login.html" },
-    { "source": "/login", "destination": "/login.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/products", "destination": "/products.html" },
-    { "source": "/vouchers", "destination": "/vouchers.html" },
-    { "source": "/orders", "destination": "/orders.html" },
-    { "source": "/customers", "destination": "/customers.html" }
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "routes": [
+    { "src": "/", "dest": "/login.html" },
+    { "src": "/login", "dest": "/login.html" },
+    { "src": "/dashboard", "dest": "/dashboard.html" },
+    { "src": "/products", "dest": "/products.html" },
+    { "src": "/vouchers", "dest": "/vouchers.html" },
+    { "src": "/orders", "dest": "/orders.html" },
+    { "src": "/customers", "dest": "/customers.html" },
+    { "src": "/schedule", "dest": "/schedule.html" }
   ]
 }
