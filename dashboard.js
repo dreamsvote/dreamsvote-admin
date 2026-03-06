@@ -37,10 +37,10 @@ function initChart() {
     })
 }
 
+// PERBAIKI FUNGSI LOGOUT INI
 function logout() {
-            document.getElementById('main-app').classList.add('hidden');
-            document.getElementById('login-page').classList.remove('hidden');
-            document.getElementById('login-form').reset();
-        }
+    // Redirect ke halaman login
+    window.location.href = 'login.html';
+}
 
 document.addEventListener('DOMContentLoaded', init)
