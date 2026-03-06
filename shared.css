@@ -15,12 +15,19 @@ body {
 /* ===== SIDEBAR ===== */
 .sidebar-link {
     transition: all 0.3s ease;
+    border-left: 3px solid transparent;
 }
 
-.sidebar-link:hover,
+.sidebar-link:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: #F8FAFC;
+}
+
+/* ACTIVE STATE - 1 warna saja, tidak gradasi */
 .sidebar-link.active {
-    background: linear-gradient(90deg, rgba(139, 92, 246, 0.2) 0%, transparent 100%);
+    background: rgba(139, 92, 246, 0.2);
     border-left: 3px solid #8B5CF6;
+    color: #8B5CF6;
 }
 
 /* ===== CARDS ===== */
