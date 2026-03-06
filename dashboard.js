@@ -15,6 +15,18 @@ async function checkAuth() {
 }
 
 // ============================================
+// HIGHLIGHT ACTIVE NAV
+// ============================================
+function highlightActiveNav() {
+    const page = window.location.pathname.split('/').pop().replace('.html', '')
+    const navEl = document.getElementById('nav-' + page)
+    if (navEl) {
+        navEl.classList.add('active')
+        navEl.classList.remove('text-gray-300')
+    }
+}
+
+// ============================================
 // LOGOUT - Global access
 // ============================================
 window.logout = async function() {
@@ -40,16 +52,18 @@ async function init() {
     // Cek auth dulu sebelum load data
     if (!await checkAuth()) return
 
+    // Highlight nav
+    highlightActiveNav()
+
     try {
         const stats = await getDashboardStats()
 
-        document.getElementById('stat-revenue').textContent  = '$' + stats.totalRevenue.toLocaleString()
+        document.getElementById('stat-revenue').textContent  = 'Rp' + stats.totalRevenue.toLocaleString()
         document.getElementById('stat-orders').textContent   = stats.totalOrders.toLocaleString()
         document.getElementById('stat-customers').textContent = stats.totalCustomers.toLocaleString()
         document.getElementById('stat-votes').textContent    = stats.totalVotesSold.toLocaleString()
 
         initChart()
-        // highlightActiveNav() dihapus - sudah dihandle shared.js
     } catch (error) {
         console.error('Error loading dashboard:', error)
         showToast('Error loading data', 'error')
