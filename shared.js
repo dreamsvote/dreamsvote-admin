@@ -109,3 +109,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Highlight nav aktif
     highlightActiveNav()
 })
+
+// Export untuk module
+export { checkAuth, highlightActiveNav }
