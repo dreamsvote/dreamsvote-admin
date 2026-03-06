@@ -56,19 +56,7 @@
         </div>
     </aside>
 
-        // Highlight active nav
-    highlightActiveNav()
-}
 
-function highlightActiveNav() {
-    const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html'
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
-            link.classList.add('bg-primary/20', 'text-primary', 'border-r-2', 'border-primary')
-            link.classList.remove('text-gray-300')
-        }
-    })
-}
     
     <!-- Mobile Header -->
     <div class="md:hidden fixed top-0 w-full glass border-b border-white/10 z-30 px-4 py-3 flex justify-between items-center">
