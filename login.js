@@ -1,19 +1,24 @@
 import { supabase } from './supabase.js'
 
 // ============================================
-// CHECK EXISTING SESSION
+// CHECK EXISTING SESSION - Hanya kalau remember me
 // ============================================
 async function checkExistingSession() {
-    const { data } = await supabase.auth.getSession()
+    const rememberMe = localStorage.getItem('dreamsvote_remember')
     
-    // Kalau ada session aktif, langsung ke dashboard
-    if (data.session) {
-        window.location.replace('dashboard.html')
+    // Kalau tidak ada remember me, tetap di login page
+    if (!rememberMe) {
         return
     }
     
-    // Kalau ada remember me tapi session expired, tetap di login page
-    // (Supabase handle session refresh otomatis)
+    // Kalau remember me ada, cek session
+    const { data } = await supabase.auth.getSession()
+    
+    if (data.session) {
+        window.location.replace('dashboard.html')
+    }
+    // Kalau session expired tapi remember me ada, biarkan di login page
+    // User harus login ulang
 }
 
 // ============================================
@@ -42,11 +47,8 @@ async function handleLogin(e) {
     // Simpan remember me preference
     if (rememberMe) {
         localStorage.setItem('dreamsvote_remember', 'true')
-        // Set session persistence to local (survive browser restart)
-        await supabase.auth.setSession(data.session)
     } else {
         localStorage.removeItem('dreamsvote_remember')
-        // Session only for current tab
     }
 
     window.location.replace('dashboard.html')
