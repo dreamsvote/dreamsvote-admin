@@ -20,6 +20,7 @@ async function init() {
     // Load data
     vouchers = await getVouchers()
     renderVouchers()
+    updateStats()
 }
 
 // ============================================
@@ -133,3 +134,19 @@ document.addEventListener('keydown', e => {
 })
 
 document.addEventListener('DOMContentLoaded', init)
+
+// ============================================
+// UPDATE STATS
+// ============================================
+function updateStats() {
+    const now = new Date()
+    const active  = vouchers.filter(v => new Date(v.expiry) >= now && !(v.max_uses && v.used >= v.max_uses))
+    const expired = vouchers.filter(v => new Date(v.expiry) < now  ||  (v.max_uses && v.used >= v.max_uses))
+
+    const el1 = document.getElementById('stat-active')
+    const el2 = document.getElementById('stat-expired')
+
+    if (el1) el1.textContent = active.length
+    if (el2) el2.textContent = expired.length
+    // stat-discounted tidak bisa dihitung dari vouchers saja, butuh data orders
+}
