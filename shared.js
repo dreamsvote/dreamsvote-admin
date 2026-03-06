@@ -35,7 +35,8 @@ function highlightActiveNav() {
     const page = window.location.pathname.split('/').pop().replace('.html', '')
     const navEl = document.getElementById('nav-' + page)
     if (navEl) {
-        navEl.classList.add('active', 'bg-primary/20', 'text-primary', 'border-l-2', 'border-primary')
+        navEl.classList.add('active')
+        // Hapus class tambahan yang tidak perlu
         navEl.classList.remove('text-gray-300')
     }
 }
