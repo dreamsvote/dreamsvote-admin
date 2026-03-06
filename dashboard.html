@@ -1,244 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DreamsVote | Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter','sans-serif'], display: ['Space Grotesk','sans-serif'] },
-                    colors: { primary:'#8B5CF6', secondary:'#EC4899', accent:'#3B82F6', dark:'#0F172A', darker:'#020617', surface:'#1E293B' }
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" href="shared.css">
-    <link rel="stylesheet" href="dashboard.css">
-</head>
-<body class="min-h-screen flex">
-
-    <!-- Sidebar -->
-    <aside class="w-64 glass border-r border-white/10 fixed h-full z-40 hidden md:flex flex-col">
-        <div class="p-6 border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold shadow-lg">DV</div>
-                <div>
-                    <h1 class="font-display font-bold text-lg">DreamsVote</h1>
-                    <p class="text-xs text-gray-400">Admin Panel</p>
-                </div>
-            </div>
-        </div>
-        <nav class="flex-1 py-6 space-y-1 overflow-y-auto custom-scrollbar">
-            <a href="dashboard.html" id="nav-dashboard" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-chart-line w-5"></i><span>Dashboard</span></a>
-            <a href="products.html"  id="nav-products"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-box w-5"></i><span>Products</span></a>
-            <a href="vouchers.html"  id="nav-vouchers"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-ticket w-5"></i><span>Vouchers</span></a>
-            <a href="orders.html"    id="nav-orders"    class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-shopping-cart w-5"></i><span>Orders</span></a>
-            <a href="schedule.html" id="nav-schedule" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-calendar-days w-5"></i><span>Schedule</span></a>
-            <a href="customers.html" id="nav-customers" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-users w-5"></i><span>Customers</span></a>
-        </nav>
-        <div class="p-6 border-t border-white/10">
-            <div class="flex items-center gap-3 mb-4">
-                <img src="https://ui-avatars.com/api/?name=Admin&background=8B5CF6&color=fff" class="w-10 h-10 rounded-full">
-                <div>
-                    <p class="font-medium text-sm">Administrator</p>
-                    <p class="text-xs text-gray-400"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="85e4e1e8ecebc5e1f7e0e4e8f6f3eaf1e0abe6eae8">[email&#160;protected]</a></p>
-                </div>
-            </div>
-            <button onclick="logout()" class="w-full py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition text-sm font-medium">
-                <i class="fa-solid fa-sign-out-alt mr-2"></i>Logout
+<!-- New Order Modal -->
+<div id="order-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeOrderModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass rounded-3xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar relative">
+            <button onclick="closeOrderModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
             </button>
-        </div>
-    </aside>
+            
+            <h3 class="font-display text-2xl font-bold mb-6">Create New Order</h3>
+            
+            <form id="order-form" onsubmit="saveOrder(event)" class="space-y-6">
+                <!-- Customer Info -->
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Customer Name *</label>
+                        <input type="text" id="order-customer-name" required class="input-field w-full px-4 py-3 rounded-xl text-white" placeholder="John Doe">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Email *</label>
+                        <input type="email" id="order-customer-email" required class="input-field w-full px-4 py-3 rounded-xl text-white" placeholder="customer@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">WhatsApp</label>
+                        <input type="text" id="order-customer-whatsapp" class="input-field w-full px-4 py-3 rounded-xl text-white" placeholder="+6281234567890">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Voucher Code</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="order-voucher" class="input-field flex-1 px-4 py-3 rounded-xl text-white uppercase" placeholder="e.g., VOTE10">
+                            <button type="button" onclick="applyVoucher()" class="px-4 py-3 rounded-xl bg-primary/20 text-primary hover:bg-primary/30 transition text-sm font-medium">Apply</button>
+                        </div>
+                        <p id="voucher-message" class="text-xs mt-1"></p>
+                    </div>
+                </div>
 
-    <!-- Mobile Header -->
-    <div class="md:hidden fixed top-0 w-full glass border-b border-white/10 z-30 px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-sm">DV</div>
-            <span class="font-display font-bold">DreamsVote</span>
-        </div>
-        <button onclick="toggleMobileMenu()" class="p-2"><i class="fa-solid fa-bars text-xl"></i></button>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-darker/95 backdrop-blur-lg hidden md:hidden pt-16">
-        <div class="p-4 space-y-2">
-            <a href="dashboard.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Dashboard</a>
-            <a href="products.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Products</a>
-            <a href="vouchers.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Vouchers</a>
-            <a href="orders.html"    class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Orders</a>
-            <a href="schedule.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Schedule</a>
-            <a href="customers.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Customers</a>
-            <button onclick="logout()" class="w-full p-4 rounded-xl bg-red-500/10 text-red-400 text-left">Logout</button>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <main class="flex-1 md:ml-64 pt-16 md:pt-0">
-        <div class="p-6 md:p-8 fade-in">
-
-            <div class="flex justify-between items-center mb-8">
+                <!-- Products Selection -->
                 <div>
-                    <h2 class="font-display text-3xl font-bold mb-1">Dashboard</h2>
-                    <p class="text-gray-400">Welcome back! Here's what's happening today.</p>
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="block text-sm font-medium text-gray-300">Select Products *</label>
+                        <button type="button" onclick="addProductRow()" class="text-primary text-sm hover:text-secondary transition">
+                            <i class="fa-solid fa-plus mr-1"></i>Add Product
+                        </button>
+                    </div>
+                    <div id="order-products-container" class="space-y-3">
+                        <!-- Product rows will be added here -->
+                    </div>
                 </div>
-                <div class="flex gap-3">
-                    <button class="px-4 py-2 rounded-lg glass text-sm hover:bg-white/10 transition">
-                        <i class="fa-solid fa-download mr-2"></i>Export
-                    </button>
-                    <button class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/80 text-sm font-medium transition">
-                        <i class="fa-solid fa-plus mr-2"></i>New Order
-                    </button>
-                </div>
-            </div>
 
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="glass rounded-2xl p-6 card-hover border border-white/5">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 rounded-xl bg-primary/20 text-primary"><i class="fa-solid fa-dollar-sign text-xl"></i></div>
-                        <span class="text-green-400 text-sm font-medium">+12.5%</span>
+                <!-- Order Summary -->
+                <div class="glass rounded-xl p-4 border border-white/10">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-400">Subtotal</span>
+                        <span id="order-subtotal" class="font-bold">Rp0</span>
                     </div>
-                    <h3 class="text-3xl font-bold mb-1" id="stat-revenue">$12,450</h3>
-                    <p class="text-gray-400 text-sm">Total Revenue</p>
-                </div>
-                <div class="glass rounded-2xl p-6 card-hover border border-white/5">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 rounded-xl bg-secondary/20 text-secondary"><i class="fa-solid fa-shopping-bag text-xl"></i></div>
-                        <span class="text-green-400 text-sm font-medium">+8.2%</span>
+                    <div class="flex justify-between items-center mb-2 text-green-400">
+                        <span>Discount</span>
+                        <span id="order-discount">-Rp0</span>
                     </div>
-                    <h3 class="text-3xl font-bold mb-1" id="stat-orders">1,248</h3>
-                    <p class="text-gray-400 text-sm">Total Orders</p>
-                </div>
-                <div class="glass rounded-2xl p-6 card-hover border border-white/5">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 rounded-xl bg-accent/20 text-accent"><i class="fa-solid fa-users text-xl"></i></div>
-                        <span class="text-green-400 text-sm font-medium">+24%</span>
+                    <div class="flex justify-between items-center pt-2 border-t border-white/10">
+                        <span class="text-lg font-bold">Total</span>
+                        <span id="order-total" class="text-2xl font-bold text-primary">Rp0</span>
                     </div>
-                    <h3 class="text-3xl font-bold mb-1" id="stat-customers">856</h3>
-                    <p class="text-gray-400 text-sm">New Customers</p>
                 </div>
-                <div class="glass rounded-2xl p-6 card-hover border border-white/5">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 rounded-xl bg-yellow-500/20 text-yellow-500"><i class="fa-solid fa-box text-xl"></i></div>
-                        <span class="text-red-400 text-sm font-medium">-3.1%</span>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-1" id="stat-votes">45,200</h3>
-                    <p class="text-gray-400 text-sm">Votes Sold</p>
-                </div>
-            </div>
 
-            <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <div class="lg:col-span-2 glass rounded-2xl p-6 border border-white/5">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-bold text-lg">Revenue Overview</h3>
-                        <select class="bg-surface border border-white/10 rounded-lg px-3 py-1 text-sm">
-                            <option>Last 7 Days</option>
-                            <option>Last 30 Days</option>
-                            <option>This Year</option>
-                        </select>
-                    </div>
-                    <canvas id="revenueChart" height="100"></canvas>
+                <!-- Payment Method -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Payment Method *</label>
+                    <select id="order-payment-method" required class="input-field w-full px-4 py-3 rounded-xl text-white">
+                        <option value="">Select payment method</option>
+                        <option value="BCA">BCA Transfer</option>
+                        <option value="BRI">BRI Transfer</option>
+                        <option value="Dana">Dana</option>
+                    </select>
                 </div>
-                <div class="glass rounded-2xl p-6 border border-white/5">
-                    <h3 class="font-bold text-lg mb-6">Top Products</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center text-pink-400 font-bold text-xs">UP</div>
-                                <div><p class="font-medium text-sm">UPICK Blue</p><p class="text-xs text-gray-400">2,450 sales</p></div>
-                            </div>
-                            <span class="font-bold text-primary">$2,450</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-xs">M1</div>
-                                <div><p class="font-medium text-sm">MY1PICK Heart</p><p class="text-xs text-gray-400">1,890 sales</p></div>
-                            </div>
-                            <span class="font-bold text-primary">$1,890</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold text-xs">IC</div>
-                                <div><p class="font-medium text-sm">IDOLCHAMP</p><p class="text-xs text-gray-400">1,234 sales</p></div>
-                            </div>
-                            <span class="font-bold text-primary">$1,234</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center text-yellow-400 font-bold text-xs">MB</div>
-                                <div><p class="font-medium text-sm">MUBEAT</p><p class="text-xs text-gray-400">987 sales</p></div>
-                            </div>
-                            <span class="font-bold text-primary">$987</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Recent Orders Table -->
-            <div class="glass rounded-2xl border border-white/5 overflow-hidden">
-                <div class="p-6 border-b border-white/10 flex justify-between items-center">
-                    <h3 class="font-bold text-lg">Recent Orders</h3>
-                    <a href="orders.html" class="text-primary text-sm hover:text-secondary transition">View All</a>
+                <!-- Notes -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Notes</label>
+                    <textarea id="order-notes" rows="3" class="input-field w-full px-4 py-3 rounded-xl text-white resize-none" placeholder="Any special requests..."></textarea>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-white/5 text-gray-400 text-xs uppercase">
-                            <tr>
-                                <th class="px-6 py-4">Order ID</th>
-                                <th class="px-6 py-4">Customer</th>
-                                <th class="px-6 py-4">Product</th>
-                                <th class="px-6 py-4">Amount</th>
-                                <th class="px-6 py-4">Status</th>
-                                <th class="px-6 py-4">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-white/5 text-sm">
-                            <tr class="hover:bg-white/5 transition">
-                                <td class="px-6 py-4 font-mono text-primary">#ORD-7891</td>
-                                <td class="px-6 py-4">sarah_kpopfan</td>
-                                <td class="px-6 py-4">UPICK Blue Jam x500</td>
-                                <td class="px-6 py-4 font-bold">$4.95</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs">Completed</span></td>
-                                <td class="px-6 py-4 text-gray-400">2 mins ago</td>
-                            </tr>
-                            <tr class="hover:bg-white/5 transition">
-                                <td class="px-6 py-4 font-mono text-primary">#ORD-7890</td>
-                                <td class="px-6 py-4">bts_army99</td>
-                                <td class="px-6 py-4">MY1PICK Heart x1000</td>
-                                <td class="px-6 py-4 font-bold">$8.90</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs">Processing</span></td>
-                                <td class="px-6 py-4 text-gray-400">15 mins ago</td>
-                            </tr>
-                            <tr class="hover:bg-white/5 transition">
-                                <td class="px-6 py-4 font-mono text-primary">#ORD-7889</td>
-                                <td class="px-6 py-4">blink_forever</td>
-                                <td class="px-6 py-4">IDOLCHAMP Ruby x200</td>
-                                <td class="px-6 py-4 font-bold">$1.90</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs">Completed</span></td>
-                                <td class="px-6 py-4 text-gray-400">1 hour ago</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeOrderModal()" class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 font-medium transition">Cancel</button>
+                    <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary font-bold hover:shadow-lg transition">Create Order</button>
+                </div>
+            </form>
         </div>
-    </main>
-
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-8 right-8 glass px-6 py-4 rounded-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
-        <i class="fa-solid fa-check-circle text-primary text-xl"></i>
-        <span id="toast-message" class="font-medium text-white">Operation successful</span>
     </div>
-    
-    <script src="shared.js"></script>
-    <script type="module" src="dashboard.js"></script>
-</body>
-</html>
+</div>
