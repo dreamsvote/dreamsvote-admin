@@ -171,3 +171,23 @@ export async function getDashboardStats() {
 
     return { totalRevenue, totalOrders, totalCustomers, totalVotesSold }
 }
+
+// ================================================
+// AUTH STATE LISTENER
+// ================================================
+
+supabase.auth.onAuthStateChange((event, session) => {
+    console.log('Auth event:', event)
+    
+    if (event === 'SIGNED_OUT') {
+        // Pastikan redirect ke login kalau sign out
+        const currentPage = window.location.pathname.split('/').pop()
+        if (currentPage !== 'login.html' && currentPage !== '') {
+            window.location.replace('login.html')
+        }
+    }
+    
+    if (event === 'TOKEN_REFRESHED') {
+        console.log('Token refreshed successfully')
+    }
+})
