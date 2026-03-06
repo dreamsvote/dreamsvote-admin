@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DreamsVote | Customers</title>
-    <script src="https://cdn.tailwindcss.com"><\/script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -16,11 +16,13 @@
                 }
             }
         }
-    <\/script>
+    </script>
     <link rel="stylesheet" href="shared.css">
     <link rel="stylesheet" href="customers.css">
 </head>
 <body class="min-h-screen flex">
+
+    <!-- Sidebar -->
     <aside class="w-64 glass border-r border-white/10 fixed h-full z-40 hidden md:flex flex-col">
         <div class="p-6 border-b border-white/10">
             <div class="flex items-center gap-3">
@@ -33,7 +35,7 @@
             <a href="products.html"  id="nav-products"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-box w-5"></i><span>Products</span></a>
             <a href="vouchers.html"  id="nav-vouchers"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-ticket w-5"></i><span>Vouchers</span></a>
             <a href="orders.html"    id="nav-orders"    class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-shopping-cart w-5"></i><span>Orders</span></a>
-            <a href="schedule.html" id="nav-schedule" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-calendar-days w-5"></i><span>Schedule</span></a>
+            <a href="schedule.html"  id="nav-schedule"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-calendar-days w-5"></i><span>Schedule</span></a>
             <a href="customers.html" id="nav-customers" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-users w-5"></i><span>Customers</span></a>
         </nav>
         <div class="p-6 border-t border-white/10">
@@ -46,6 +48,8 @@
             </button>
         </div>
     </aside>
+
+    <!-- Mobile Header -->
     <div class="md:hidden fixed top-0 w-full glass border-b border-white/10 z-30 px-4 py-3 flex justify-between items-center">
         <div class="flex items-center gap-2">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-sm">DV</div>
@@ -53,30 +57,158 @@
         </div>
         <button onclick="toggleMobileMenu()" class="p-2"><i class="fa-solid fa-bars text-xl"></i></button>
     </div>
+
+    <!-- Mobile Menu -->
     <div id="mobile-menu" class="fixed inset-0 z-40 bg-darker/95 backdrop-blur-lg hidden md:hidden pt-16">
         <div class="p-4 space-y-2">
             <a href="dashboard.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Dashboard</a>
             <a href="products.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Products</a>
             <a href="vouchers.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Vouchers</a>
             <a href="orders.html"    class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Orders</a>
-            <a href="schedule.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Schedule</a>
+            <a href="schedule.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Schedule</a>
             <a href="customers.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Customers</a>
             <button onclick="logout()" class="w-full p-4 rounded-xl bg-red-500/10 text-red-400 text-left">Logout</button>
         </div>
     </div>
+
+    <!-- Main Content -->
     <main class="flex-1 md:ml-64 pt-16 md:pt-0">
         <div class="p-6 md:p-8 fade-in">
-            <h2 class="font-display text-3xl font-bold mb-6">Customer Management</h2>
-            <div class="glass rounded-2xl p-12 text-center border border-white/5">
-                <i class="fa-solid fa-users text-6xl text-gray-600 mb-4"></i>
-                <p class="text-gray-400">Customer management interface would go here</p>
+
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="font-display text-3xl font-bold mb-1">Customers</h2>
+                    <p class="text-gray-400">Data pelanggan DreamsVote</p>
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="search-input" placeholder="Cari customer..." oninput="filterCustomers()"
+                        class="input-field pl-9 pr-4 py-2 rounded-lg text-sm w-52">
+                </div>
             </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="glass rounded-xl p-4 border border-white/5">
+                    <p class="text-xs text-gray-400 mb-1">Total Customers</p>
+                    <p class="text-2xl font-bold" id="stat-total">0</p>
+                </div>
+                <div class="glass rounded-xl p-4 border border-white/5">
+                    <p class="text-xs text-green-400 mb-1">Active</p>
+                    <p class="text-2xl font-bold text-green-400" id="stat-active">0</p>
+                </div>
+                <div class="glass rounded-xl p-4 border border-white/5">
+                    <p class="text-xs text-primary mb-1">Total Orders</p>
+                    <p class="text-2xl font-bold text-primary" id="stat-orders">0</p>
+                </div>
+                <div class="glass rounded-xl p-4 border border-white/5">
+                    <p class="text-xs text-secondary mb-1">Total Revenue</p>
+                    <p class="text-2xl font-bold text-secondary" id="stat-revenue">$0</p>
+                </div>
+            </div>
+
+            <!-- Filter -->
+            <div class="flex gap-2 mb-4">
+                <button class="filter-tab active" onclick="setFilter('all', this)">All</button>
+                <button class="filter-tab" onclick="setFilter('active', this)">Active</button>
+                <button class="filter-tab" onclick="setFilter('inactive', this)">Inactive</button>
+            </div>
+
+            <!-- Table -->
+            <div class="glass rounded-2xl border border-white/5 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-white/5 text-gray-400 text-xs uppercase">
+                            <tr>
+                                <th class="px-4 py-4">Customer</th>
+                                <th class="px-4 py-4">Username</th>
+                                <th class="px-4 py-4">WhatsApp</th>
+                                <th class="px-4 py-4">Total Orders</th>
+                                <th class="px-4 py-4">Total Spent</th>
+                                <th class="px-4 py-4">Status</th>
+                                <th class="px-4 py-4">Bergabung</th>
+                                <th class="px-4 py-4">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5" id="customers-tbody">
+                            <tr>
+                                <td colspan="8" class="px-4 py-12 text-center text-gray-400">
+                                    <i class="fa-solid fa-users text-5xl mb-4 block text-gray-600"></i>
+                                    Loading customers...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </main>
+
+    <!-- Customer Detail Modal -->
+    <div id="detail-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeDetailModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="glass rounded-3xl p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+                <button onclick="closeDetailModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <!-- Avatar & Name -->
+                <div class="flex items-center gap-4 mb-6">
+                    <div id="modal-avatar" class="customer-avatar text-white text-xl w-16 h-16"></div>
+                    <div>
+                        <h3 class="font-display text-xl font-bold" id="modal-name">-</h3>
+                        <p class="text-gray-400 text-sm" id="modal-email">-</p>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="glass rounded-xl p-4 mb-4 border border-white/5">
+                    <p class="text-xs text-gray-400 uppercase mb-3">Info Customer</p>
+                    <div class="detail-row"><span class="detail-label">Username</span><span class="detail-value" id="modal-username">-</span></div>
+                    <div class="detail-row"><span class="detail-label">WhatsApp</span><span class="detail-value" id="modal-wa">-</span></div>
+                    <div class="detail-row"><span class="detail-label">Bergabung</span><span class="detail-value" id="modal-joined">-</span></div>
+                    <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value" id="modal-status">-</span></div>
+                </div>
+
+                <!-- Order Stats -->
+                <div class="glass rounded-xl p-4 mb-4 border border-white/5">
+                    <p class="text-xs text-gray-400 uppercase mb-3">Statistik Order</p>
+                    <div class="detail-row"><span class="detail-label">Total Orders</span><span class="detail-value" id="modal-total-orders">-</span></div>
+                    <div class="detail-row"><span class="detail-label">Completed</span><span class="detail-value text-green-400" id="modal-completed">-</span></div>
+                    <div class="detail-row"><span class="detail-label">Total Spent</span><span class="detail-value text-primary font-bold" id="modal-spent">-</span></div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="glass rounded-xl p-4 mb-6 border border-white/5">
+                    <p class="text-xs text-gray-400 uppercase mb-3">Order Terbaru</p>
+                    <div id="modal-recent-orders" class="space-y-2"></div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-3">
+                    <button onclick="toggleCustomerStatus()" id="toggle-status-btn"
+                        class="flex-1 py-3 rounded-xl bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 font-medium transition text-sm">
+                        Toggle Status
+                    </button>
+                    <button onclick="deleteCustomer()"
+                        class="flex-1 py-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 font-medium transition text-sm">
+                        <i class="fa-solid fa-trash mr-2"></i>Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
     <div id="toast" class="fixed bottom-8 right-8 glass px-6 py-4 rounded-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
         <i class="fa-solid fa-check-circle text-primary text-xl"></i>
         <span id="toast-message" class="font-medium"></span>
     </div>
-    <script src="shared.js"><\/script>
+
+    <script type="module" src="shared.js"></script>
+    <script type="module" src="customers.js"></script>
 </body>
 </html>
