@@ -191,3 +191,18 @@ supabase.auth.onAuthStateChange((event, session) => {
         console.log('Token refreshed successfully')
     }
 })
+
+
+// ================================================
+// ORDERS
+// ================================================
+
+export async function createOrder(orderData) {
+    const { data, error } = await supabase
+        .from('orders')
+        .insert([orderData])
+        .select()
+        .single()
+    if (error) console.error('createOrder error:', error)
+    return data
+}
