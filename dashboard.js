@@ -42,8 +42,8 @@ async function init() {
 
     try {
         const stats = await getDashboardStats()
-
-        document.getElementById('stat-revenue').textContent  = '$
+// ✅ BENAR - Ganti dengan ini:
+    document.getElementById('stat-revenue').textContent  = '$' + stats.totalRevenue.toLocaleString()
     document.getElementById('stat-orders').textContent   = stats.totalOrders.toLocaleString()
     document.getElementById('stat-customers').textContent = stats.totalCustomers.toLocaleString()
     document.getElementById('stat-votes').textContent    = stats.totalVotesSold.toLocaleString()
