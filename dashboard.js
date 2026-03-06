@@ -37,10 +37,4 @@ function initChart() {
     })
 }
 
-// PERBAIKI FUNGSI LOGOUT INI
-function logout() {
-    // Redirect ke halaman login
-    window.location.href = 'login.html';
-}
-
 document.addEventListener('DOMContentLoaded', init)
