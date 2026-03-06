@@ -49,21 +49,11 @@ async function init() {
         document.getElementById('stat-votes').textContent    = stats.totalVotesSold.toLocaleString()
 
         initChart()
-        highlightActiveNav()
+        // highlightActiveNav() dihapus - sudah dihandle shared.js
     } catch (error) {
         console.error('Error loading dashboard:', error)
         showToast('Error loading data', 'error')
     }
-}
-
-function highlightActiveNav() {
-    const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html'
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
-            link.classList.add('bg-primary/20', 'text-primary', 'border-r-2', 'border-primary')
-            link.classList.remove('text-gray-300')
-        }
-    })
 }
 
 function initChart() {
