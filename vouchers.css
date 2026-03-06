@@ -1,0 +1,12 @@
+/* Vouchers page specific styles */
+
+/* Code badge styling */
+.voucher-code {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.05em;
+}
+
+/* Table row highlight on hover */
+tbody tr {
+    transition: background 0.2s;
+}
