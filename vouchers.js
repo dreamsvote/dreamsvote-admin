@@ -14,10 +14,27 @@ async function init() {
         return
     }
     
+    // Highlight nav
+    highlightActiveNav()
+    
     // Load data
     vouchers = await getVouchers()
     renderVouchers()
 }
+
+// ============================================
+// HIGHLIGHT ACTIVE NAV
+// ============================================
+function highlightActiveNav() {
+    const page = window.location.pathname.split('/').pop().replace('.html', '')
+    const navEl = document.getElementById('nav-' + page)
+    if (navEl) {
+        navEl.classList.add('active')
+        navEl.classList.remove('text-gray-300')
+    }
+}
+
+// ... rest of the code (renderVouchers, modal functions, etc.)
 
 // ============================================
 // RENDER VOUCHERS
