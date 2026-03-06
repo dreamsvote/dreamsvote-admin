@@ -1,6 +1,44 @@
 import { getDashboardStats } from './supabase.js'
 
+// ============================================
+// AUTH CHECK
+// ============================================
+function checkAuth() {
+    const hasRememberMe = localStorage.getItem('dreamsvote_remember')
+    const hasSession = sessionStorage.getItem('dreamsvote_session')
+    
+    // Redirect ke login jika tidak ada session atau remember me
+    if (!hasRememberMe && !hasSession) {
+        window.location.href = 'login.html'
+        return false
+    }
+    return true
+}
+
+// ============================================
+// LOGOUT FUNCTION - Global
+// ============================================
+window.logout = function() {
+    localStorage.removeItem('dreamsvote_remember')
+    sessionStorage.removeItem('dreamsvote_session')
+    window.location.href = 'login.html'
+}
+
+// ============================================
+// MOBILE MENU TOGGLE - Global
+// ============================================
+window.toggleMobileMenu = function() {
+    const menu = document.getElementById('mobile-menu')
+    menu.classList.toggle('hidden')
+}
+
+// ============================================
+// INIT DASHBOARD
+// ============================================
 async function init() {
+    // Cek auth dulu sebelum load data
+    if (!checkAuth()) return
+
     const stats = await getDashboardStats()
 
     document.getElementById('stat-revenue').textContent  = '$' + stats.totalRevenue.toLocaleString()
@@ -9,6 +47,19 @@ async function init() {
     document.getElementById('stat-votes').textContent    = stats.totalVotesSold.toLocaleString()
 
     initChart()
+    
+    // Highlight active nav
+    highlightActiveNav()
+}
+
+function highlightActiveNav() {
+    const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html'
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        if (link.getAttribute('href') === currentPage) {
+            link.classList.add('bg-primary/20', 'text-primary', 'border-r-2', 'border-primary')
+            link.classList.remove('text-gray-300')
+        }
+    })
 }
 
 function initChart() {
