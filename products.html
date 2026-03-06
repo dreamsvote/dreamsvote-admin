@@ -4,116 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DreamsVote | Products</title>
-    <link rel="stylesheet" href="products.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter','sans-serif'], display: ['Space Grotesk','sans-serif'] },
+                    colors: { primary:'#8B5CF6', secondary:'#EC4899', accent:'#3B82F6', dark:'#0F172A', darker:'#020617', surface:'#1E293B' }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="products.css">
 </head>
-<body class="min-h-screen">
-    <div id="main-app" class="min-h-screen flex">
-        
-        <aside class="w-64 glass border-r border-white/10 fixed h-full z-40 hidden md:flex flex-col">
-            <div class="p-6 border-b border-white/10">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold shadow-lg">
-                        DV
-                    </div>
-                    <div>
-                        <h1 class="font-display font-bold text-lg">DreamsVote</h1>
-                        <p class="text-xs text-gray-400">Admin Panel</p>
-                    </div>
+<body class="min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 glass border-r border-white/10 fixed h-full z-40 hidden md:flex flex-col">
+        <div class="p-6 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold shadow-lg">DV</div>
+                <div>
+                    <h1 class="font-display font-bold text-lg">DreamsVote</h1>
+                    <p class="text-xs text-gray-400">Admin Panel</p>
                 </div>
             </div>
-
-            <nav class="flex-1 py-6 space-y-1 overflow-y-auto custom-scrollbar">
-                <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white">
-                    <i class="fa-solid fa-chart-line w-5"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="products.html" class="sidebar-link active flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white">
-                    <i class="fa-solid fa-box w-5"></i>
-                    <span>Products</span>
-                </a>
-                <a href="vouchers.html" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white">
-                    <i class="fa-solid fa-ticket w-5"></i>
-                    <span>Vouchers</span>
-                </a>
-                <a href="orders.html" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white">
-                    <i class="fa-solid fa-shopping-cart w-5"></i>
-                    <span>Orders</span>
-                </a>
-                <a href="customers.html" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white">
-                    <i class="fa-solid fa-users w-5"></i>
-                    <span>Customers</span>
-                </a>
-            </nav>
-
-            <div class="p-6 border-t border-white/10">
-                <div class="flex items-center gap-3 mb-4">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=8B5CF6&color=fff" class="w-10 h-10 rounded-full">
-                    <div>
-                        <p class="font-medium text-sm">Administrator</p>
-                        <p class="text-xs text-gray-400">admin@dreamsvote.com</p>
-                    </div>
+        </div>
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+            <a href="dashboard.html" id="nav-dashboard" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-chart-line w-5"></i><span>Dashboard</span></a>
+            <a href="products.html"  id="nav-products"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-box w-5"></i><span>Products</span></a>
+            <a href="vouchers.html"  id="nav-vouchers"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-ticket w-5"></i><span>Vouchers</span></a>
+            <a href="orders.html"    id="nav-orders"    class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-shopping-cart w-5"></i><span>Orders</span></a>
+            <a href="customers.html" id="nav-customers" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-users w-5"></i><span>Customers</span></a>
+        </nav>
+        <div class="p-6 border-t border-white/10">
+            <div class="flex items-center gap-3 mb-4">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=8B5CF6&color=fff" class="w-10 h-10 rounded-full">
+                <div>
+                    <p class="font-medium text-sm">Administrator</p>
+                    <p class="text-xs text-gray-400"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2b4a4f4642456b4f594e4a46585d445f4e05484446">[email&#160;protected]</a></p>
                 </div>
-                <button onclick="logout()" class="w-full py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition text-sm font-medium">
-                    <i class="fa-solid fa-sign-out-alt mr-2"></i>Logout
-                </button>
             </div>
-        </aside>
-
-        <div class="md:hidden fixed top-0 w-full glass border-b border-white/10 z-30 px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-sm">
-                    DV
-                </div>
-                <span class="font-display font-bold">DreamsVote</span>
-            </div>
-            <button onclick="toggleMobileMenu()" class="p-2">
-                <i class="fa-solid fa-bars text-xl"></i>
+            <button onclick="logout()" class="w-full py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition text-sm font-medium">
+                <i class="fa-solid fa-sign-out-alt mr-2"></i>Logout
             </button>
         </div>
+    </aside>
 
-        <div id="mobile-menu" class="fixed inset-0 z-40 bg-darker/95 backdrop-blur-lg hidden md:hidden pt-16">
-            <div class="p-4 space-y-2">
-                <a href="dashboard.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Dashboard</a>
-                <a href="products.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Products</a>
-                <a href="vouchers.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Vouchers</a>
-                <a href="orders.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Orders</a>
-                <button onclick="logout()" class="w-full p-4 rounded-xl bg-red-500/10 text-red-400 text-left">Logout</button>
-            </div>
+    <!-- Mobile Header -->
+    <div class="md:hidden fixed top-0 w-full glass border-b border-white/10 z-30 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-sm">DV</div>
+            <span class="font-display font-bold">DreamsVote</span>
         </div>
-
-        <main class="flex-1 md:ml-64 pt-16 md:pt-0">
-            
-            <section id="products-section" class="p-6 md:p-8 fade-in">
-                <div class="flex justify-between items-center mb-8">
-                    <div>
-                        <h2 class="font-display text-3xl font-bold mb-1">Products</h2>
-                        <p class="text-gray-400">Manage your voting app inventory and pricing</p>
-                    </div>
-                    <button onclick="openProductModal()" class="px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl font-bold hover:shadow-lg hover:shadow-primary/25 transition">
-                        <i class="fa-solid fa-plus mr-2"></i>Add Product
-                    </button>
-                </div>
-
-                <div class="glass rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
-                    <div class="flex gap-3">
-                        <button class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium">All</button>
-                        <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm transition">Active</button>
-                        <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm transition">Low Stock</button>
-                    </div>
-                    <div class="relative">
-                        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" placeholder="Search products..." class="input-field pl-10 pr-4 py-2 rounded-lg text-sm w-64">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="products-grid">
-                    </div>
-            </section>
-        </main>
+        <button onclick="toggleMobileMenu()" class="p-2"><i class="fa-solid fa-bars text-xl"></i></button>
     </div>
 
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-darker/95 backdrop-blur-lg hidden md:hidden pt-16">
+        <div class="p-4 space-y-2">
+            <a href="dashboard.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Dashboard</a>
+            <a href="products.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Products</a>
+            <a href="vouchers.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Vouchers</a>
+            <a href="orders.html"    class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Orders</a>
+            <a href="customers.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Customers</a>
+            <button onclick="logout()" class="w-full p-4 rounded-xl bg-red-500/10 text-red-400 text-left">Logout</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 md:ml-64 pt-16 md:pt-0">
+        <div class="p-6 md:p-8 fade-in">
+
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="font-display text-3xl font-bold mb-1">Products</h2>
+                    <p class="text-gray-400">Manage your voting app inventory and pricing</p>
+                </div>
+                <button onclick="openProductModal()" class="px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl font-bold hover:shadow-lg hover:shadow-primary/25 transition">
+                    <i class="fa-solid fa-plus mr-2"></i>Add Product
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="glass rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex gap-3">
+                    <button class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium">All</button>
+                    <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm transition">Active</button>
+                    <button class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm transition">Low Stock</button>
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Search products..." class="input-field pl-10 pr-4 py-2 rounded-lg text-sm w-64">
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="products-grid"></div>
+
+        </div>
+    </main>
+
+    <!-- Product Modal -->
     <div id="product-modal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeProductModal()"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4">
@@ -121,18 +116,14 @@
                 <button onclick="closeProductModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-                
-                <h3 class="font-display text-2xl font-bold mb-6" id="product-modal-title">Edit Product</h3>
-                
+                <h3 class="font-display text-2xl font-bold mb-6" id="product-modal-title">Add Product</h3>
                 <form id="product-form" onsubmit="saveProduct(event)" class="space-y-6">
                     <input type="hidden" id="product-id">
-                    
                     <div class="grid grid-cols-2 gap-6">
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-300 mb-2">Product Name</label>
                             <input type="text" id="product-name" required class="input-field w-full px-4 py-3 rounded-xl text-white">
                         </div>
-                        
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">App Platform</label>
                             <select id="product-app" class="input-field w-full px-4 py-3 rounded-xl text-white">
@@ -144,22 +135,18 @@
                                 <option value="STARPLANET">STARPLANET</option>
                             </select>
                         </div>
-                        
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Vote Type</label>
                             <input type="text" id="product-type" placeholder="e.g., Blue Jam, Heart" required class="input-field w-full px-4 py-3 rounded-xl text-white">
                         </div>
-                        
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Price per 100 votes ($)</label>
                             <input type="number" id="product-price" step="0.01" required class="input-field w-full px-4 py-3 rounded-xl text-white">
                         </div>
-                        
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Stock (votes available)</label>
                             <input type="number" id="product-stock" required class="input-field w-full px-4 py-3 rounded-xl text-white">
                         </div>
-                        
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-300 mb-2">Status</label>
                             <div class="flex gap-4">
@@ -174,7 +161,6 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="flex gap-3 pt-4">
                         <button type="button" onclick="closeProductModal()" class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 font-medium transition">Cancel</button>
                         <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary font-bold hover:shadow-lg transition">Save Product</button>
@@ -184,7 +170,8 @@
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-8 right-8 glass px-6 py-4 rounded-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50 border border-primary/30">
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-8 right-8 glass px-6 py-4 rounded-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
         <i class="fa-solid fa-check-circle text-primary text-xl"></i>
         <span id="toast-message" class="font-medium text-white">Operation successful</span>
     </div>
