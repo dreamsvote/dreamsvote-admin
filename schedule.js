@@ -456,10 +456,13 @@ window.deleteSlot = async function(slotId) {
 // GLOBAL EXPORTS
 // ============================================
 window.changeMonth = changeMonth
-window.logout = function() {
+// ✅ BENAR - Ganti dengan ini:
+window.logout = async function() {
+    await supabase.auth.signOut()
     localStorage.removeItem('dreamsvote_remember')
-    sessionStorage.removeItem('dreamsvote_session')
-    window.location.href = 'login.html'
+    localStorage.removeItem('sb-cirrufadyvsrswjfvabr-auth-token')
+    sessionStorage.clear()
+    window.location.replace('login.html')
 }
 window.toggleMobileMenu = function() {
     document.getElementById('mobile-menu').classList.toggle('hidden')
