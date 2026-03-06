@@ -2,8 +2,22 @@ function handleLogin(e) {
     e.preventDefault();
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('remember-me').checked;
 
     if (username === 'admin' && password === 'admin123') {
+        // Simpan data jika Remember Me dicentang
+        if (rememberMe) {
+            localStorage.setItem('dreamsvote_remember', JSON.stringify({
+                username: username,
+                timestamp: new Date().getTime()
+            }));
+        } else {
+            localStorage.removeItem('dreamsvote_remember');
+        }
+        
+        // Simpan session login
+        sessionStorage.setItem('dreamsvote_session', 'active');
+        
         window.location.href = 'dashboard.html';
     } else {
         showToast('Invalid credentials!');
@@ -28,3 +42,20 @@ function showToast(message) {
     toast.classList.remove('translate-y-20', 'opacity-0');
     setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
 }
+
+// Load saved username saat halaman dimuat
+window.addEventListener('DOMContentLoaded', function() {
+    const saved = localStorage.getItem('dreamsvote_remember');
+    if (saved) {
+        const data = JSON.parse(saved);
+        // Cek apakah data masih valid (30 hari)
+        const daysPassed = (new Date().getTime() - data.timestamp) / (1000 * 60 * 60 * 24);
+        
+        if (daysPassed < 30) {
+            document.getElementById('username').value = data.username;
+            document.querySelector('input[type="checkbox"]').checked = true;
+        } else {
+            localStorage.removeItem('dreamsvote_remember');
+        }
+    }
+});
