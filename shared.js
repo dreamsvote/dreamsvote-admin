@@ -1,24 +1,27 @@
 import { supabase } from './supabase.js'
 
-// Highlight active nav
 document.addEventListener('DOMContentLoaded', async () => {
+    const page = window.location.pathname.split('/').pop().replace('.html', '')
+    if (page === 'login' || page === '') return
+
     // Cek session
     const { data } = await supabase.auth.getSession()
     if (!data.session) {
-        window.location.href = 'login.html'
+        window.location.replace('login.html')
         return
     }
 
     // Highlight nav aktif
-    const page = window.location.pathname.split('/').pop().replace('.html', '')
     const navEl = document.getElementById('nav-' + page)
     if (navEl) navEl.classList.add('active')
 })
 
 window.logout = async function() {
     await supabase.auth.signOut()
+    // Hapus semua session data termasuk remember me
+    localStorage.removeItem('dreamsvote_remember')
     sessionStorage.removeItem('dreamsvote_session')
-    window.location.href = 'login.html'
+    window.location.replace('login.html')
 }
 
 window.toggleMobileMenu = function() {
