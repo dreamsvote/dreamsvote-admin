@@ -1,3 +1,14 @@
+// Tambahkan di vouchers.js dan products.js
+import { supabase } from './supabase.js'
+
+async function init() {
+    // Cek auth dulu
+    const { data } = await supabase.auth.getSession()
+    if (!data.session) {
+        window.location.replace('login.html')
+        return
+    }
+
 import { getVouchers, createVoucher, deleteVoucher } from './supabase.js'
 
 let vouchers = []
@@ -82,3 +93,7 @@ window.confirmDeleteVoucher = async function(id) {
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVoucherModal() })
 document.addEventListener('DOMContentLoaded', init)
+
+    vouchers = await getVouchers()
+    renderVouchers()
+}
