@@ -3,33 +3,34 @@ import { getDashboardStats } from './supabase.js'
 // ============================================
 // AUTH CHECK
 // ============================================
-function checkAuth() {
-    const hasRememberMe = localStorage.getItem('dreamsvote_remember')
-    const hasSession = sessionStorage.getItem('dreamsvote_session')
+async function checkAuth() {
+    const { data } = await supabase.auth.getSession()
     
-    // Redirect ke login jika tidak ada session atau remember me
-    if (!hasRememberMe && !hasSession) {
-        window.location.href = 'login.html'
+    if (!data.session) {
+        window.location.replace('login.html')
         return false
     }
     return true
 }
 
 // ============================================
-// LOGOUT FUNCTION - Global
+// LOGOUT - Global access
 // ============================================
-window.logout = function() {
+window.logout = async function() {
+    const { supabase: supabaseClient } = await import('./supabase.js')
+    await supabaseClient.auth.signOut()
     localStorage.removeItem('dreamsvote_remember')
-    sessionStorage.removeItem('dreamsvote_session')
-    window.location.href = 'login.html'
+    localStorage.removeItem('sb-cirrufadyvsrswjfvabr-auth-token')
+    sessionStorage.clear()
+    window.location.replace('login.html')
 }
 
 // ============================================
-// MOBILE MENU TOGGLE - Global
+// MOBILE MENU
 // ============================================
 window.toggleMobileMenu = function() {
     const menu = document.getElementById('mobile-menu')
-    menu.classList.toggle('hidden')
+    if (menu) menu.classList.toggle('hidden')
 }
 
 // ============================================
@@ -37,11 +38,12 @@ window.toggleMobileMenu = function() {
 // ============================================
 async function init() {
     // Cek auth dulu sebelum load data
-    if (!checkAuth()) return
+    if (!await checkAuth()) return
 
-    const stats = await getDashboardStats()
+    try {
+        const stats = await getDashboardStats()
 
-    document.getElementById('stat-revenue').textContent  = '$' + stats.totalRevenue.toLocaleString()
+        document.getElementById('stat-revenue').textContent  = '$
     document.getElementById('stat-orders').textContent   = stats.totalOrders.toLocaleString()
     document.getElementById('stat-customers').textContent = stats.totalCustomers.toLocaleString()
     document.getElementById('stat-votes').textContent    = stats.totalVotesSold.toLocaleString()
