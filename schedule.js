@@ -18,12 +18,14 @@ async function init() {
     highlightActiveNav()
 }
 
-function checkAuth() {
-    const hasRememberMe = localStorage.getItem('dreamsvote_remember')
-    const hasSession = sessionStorage.getItem('dreamsvote_session')
+// ============================================
+// AUTH CHECK
+// ============================================
+async function checkAuth() {
+    const { data } = await supabase.auth.getSession()
     
-    if (!hasRememberMe && !hasSession) {
-        window.location.href = 'login.html'
+    if (!data.session) {
+        window.location.replace('login.html')
         return false
     }
     return true
