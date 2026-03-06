@@ -1,6 +1,11 @@
-// Tambahkan di vouchers.js dan products.js
 import { supabase } from './supabase.js'
+import { getVouchers, createVoucher, deleteVoucher } from './supabase.js'
 
+let vouchers = []
+
+// ============================================
+// AUTH CHECK & INIT
+// ============================================
 async function init() {
     // Cek auth dulu
     const { data } = await supabase.auth.getSession()
@@ -8,16 +13,15 @@ async function init() {
         window.location.replace('login.html')
         return
     }
-
-import { getVouchers, createVoucher, deleteVoucher } from './supabase.js'
-
-let vouchers = []
-
-async function init() {
+    
+    // Load data
     vouchers = await getVouchers()
     renderVouchers()
 }
 
+// ============================================
+// RENDER VOUCHERS
+// ============================================
 function renderVouchers() {
     const tbody = document.getElementById('vouchers-table-body')
     if (!vouchers.length) {
@@ -45,6 +49,9 @@ function renderVouchers() {
     }).join('')
 }
 
+// ============================================
+// MODAL FUNCTIONS
+// ============================================
 window.openVoucherModal = function() {
     document.getElementById('voucher-modal').classList.remove('hidden')
     document.getElementById('voucher-expiry').valueAsDate = new Date(Date.now() + 30*24*60*60*1000)
@@ -59,6 +66,9 @@ window.generateCode = function() {
     document.getElementById('voucher-code').value = 'DV' + Math.random().toString(36).substring(2, 8).toUpperCase()
 }
 
+// ============================================
+// SAVE & DELETE
+// ============================================
 window.saveVoucher = async function(e) {
     e.preventDefault()
     const btn = e.submitter
@@ -76,7 +86,10 @@ window.saveVoucher = async function(e) {
     }
 
     const created = await createVoucher(newVoucher)
-    if (created) { vouchers.push(created); showToast('Voucher created!') }
+    if (created) { 
+        vouchers.push(created)
+        showToast('Voucher created!')
+    }
 
     btn.disabled = false
     btn.textContent = 'Create Voucher'
@@ -87,13 +100,19 @@ window.saveVoucher = async function(e) {
 window.confirmDeleteVoucher = async function(id) {
     if (confirm('Hapus voucher ini?')) {
         const ok = await deleteVoucher(id)
-        if (ok) { vouchers = vouchers.filter(v => v.id !== id); renderVouchers(); showToast('Voucher deleted!') }
+        if (ok) { 
+            vouchers = vouchers.filter(v => v.id !== id)
+            renderVouchers()
+            showToast('Voucher deleted!')
+        }
     }
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVoucherModal() })
-document.addEventListener('DOMContentLoaded', init)
+// ============================================
+// EVENT LISTENERS
+// ============================================
+document.addEventListener('keydown', e => { 
+    if (e.key === 'Escape') closeVoucherModal() 
+})
 
-    vouchers = await getVouchers()
-    renderVouchers()
-}
+document.addEventListener('DOMContentLoaded', init)
