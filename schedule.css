@@ -289,3 +289,13 @@
 .conflict-warning i {
     color: #ef4444;
 }
+
+/* ===== KST CHECKBOX GRID ===== */
+.kst-checkbox-item input:checked ~ span {
+    color: #8B5CF6;
+}
+
+.kst-checkbox-item:has(input:checked) {
+    border-color: #8B5CF6 !important;
+    background: rgba(139, 92, 246, 0.2) !important;
+}
