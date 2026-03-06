@@ -297,97 +297,104 @@ function renderTimeSlots() {
 // ============================================
 // MODAL FUNCTIONS
 // ============================================
-window.openSlotModal = function(slotId = null) {
+// Build KST checkbox grid
+function buildCheckboxGrid() {
+    const grid = document.getElementById('kst-checkbox-grid')
+    if (!grid) return
+
+    const dateKey = selectedDate ? getDateKey(selectedDate) : null
+    const existingSlots = dateKey ? (scheduleData[dateKey]?.slots || []) : []
+    const existingTimes = existingSlots.map(s => s.kst)
+
+    grid.innerHTML = Array.from({ length: 24 }, (_, i) => {
+        const kst = `${String(i).padStart(2, '0')}:00`
+        const wibH = (i - 2 + 24) % 24
+        const wib = `${String(wibH).padStart(2, '0')}:00`
+        const alreadyAdded = existingTimes.includes(kst)
+
+        return `
+            <label class="kst-checkbox-item flex flex-col items-center gap-1 p-2 rounded-xl border cursor-pointer transition
+                ${alreadyAdded ? 'border-white/5 bg-white/5 opacity-40 cursor-not-allowed' : 'border-white/10 bg-white/5 hover:border-primary/50 hover:bg-primary/10'}">
+                <input type="checkbox" value="${kst}" data-wib="${wib}"
+                    class="hidden peer" ${alreadyAdded ? 'disabled' : ''}
+                    onchange="toggleCheckboxStyle(this)">
+                <span class="text-xs font-bold font-mono peer-checked:text-primary">${kst}</span>
+                <span class="text-[10px] text-gray-500">${wib} WIB</span>
+            </label>
+        `
+    }).join('')
+}
+
+window.toggleCheckboxStyle = function(input) {
+    const label = input.closest('label')
+    if (input.checked) {
+        label.classList.add('border-primary', 'bg-primary/20')
+        label.classList.remove('border-white/10', 'bg-white/5')
+    } else {
+        label.classList.remove('border-primary', 'bg-primary/20')
+        label.classList.add('border-white/10', 'bg-white/5')
+    }
+}
+
+window.selectAllTimes = function() {
+    document.querySelectorAll('#kst-checkbox-grid input[type="checkbox"]:not(:disabled)').forEach(cb => {
+        cb.checked = true
+        toggleCheckboxStyle(cb)
+    })
+}
+
+window.clearAllTimes = function() {
+    document.querySelectorAll('#kst-checkbox-grid input[type="checkbox"]:not(:disabled)').forEach(cb => {
+        cb.checked = false
+        toggleCheckboxStyle(cb)
+    })
+}
+
+window.openSlotModal = function() {
     if (!selectedDate) {
         showToast('Please select a date first!')
         return
     }
-    
-    const modal = document.getElementById('slot-modal')
-    const form = document.getElementById('slot-form')
-    
-    if (slotId) {
-        // Edit mode - find slot
-        const dateKey = getDateKey(selectedDate)
-        const slot = scheduleData[dateKey]?.slots.find(s => s.id === slotId)
-        if (slot) {
-            document.getElementById('kst-time').value = slot.kst
-            document.getElementById('wib-time').value = slot.wib
-            document.getElementById('max-orders').value = slot.maxOrders
-            form.dataset.editId = slotId
-        }
-    } else {
-        // Add mode
-        form.reset()
-        document.getElementById('wib-time').value = ''
-        delete form.dataset.editId
-    }
-    
-    modal.classList.remove('hidden')
+    buildCheckboxGrid()
+    document.getElementById('max-orders').value = 5
+    document.getElementById('slot-modal').classList.remove('hidden')
 }
 
 window.closeSlotModal = function() {
     document.getElementById('slot-modal').classList.add('hidden')
 }
 
-window.syncWIB = function() {
-    const kstTime = document.getElementById('kst-time').value
-    if (!kstTime) return
-    
-    // KST is UTC+9, WIB is UTC+7, so WIB = KST - 2 hours
-    const [hours, minutes] = kstTime.split(':').map(Number)
-    let wibHours = hours - 2
-    if (wibHours < 0) wibHours += 24
-    
-    const wibTime = `${String(wibHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
-    document.getElementById('wib-time').value = wibTime
-}
-
 window.saveTimeSlot = async function(e) {
     e.preventDefault()
-    
-    const kst = document.getElementById('kst-time').value
-    const wib = document.getElementById('wib-time').value
-    const maxOrders = parseInt(document.getElementById('max-orders').value)
-    const editId = e.target.dataset.editId
-    
-    const dateKey = getDateKey(selectedDate)
-    
-    // Check for conflicts
-    const existingSlots = scheduleData[dateKey]?.slots || []
-    const conflict = existingSlots.find(s => s.kst === kst && s.id !== parseInt(editId))
-    if (conflict) {
-        showToast('Time slot already exists for this date!')
+
+    const checked = [...document.querySelectorAll('#kst-checkbox-grid input[type="checkbox"]:checked')]
+    if (checked.length === 0) {
+        showToast('Pilih minimal 1 waktu!')
         return
     }
-    
-    if (editId) {
-        // Update existing
-        const slot = existingSlots.find(s => s.id === parseInt(editId))
-        if (slot) {
-            slot.kst = kst
-            slot.wib = wib
-            slot.maxOrders = maxOrders
-            showToast('Time slot updated!')
-        }
-    } else {
-        // Create new
-        const newSlot = {
-            id: Date.now(),
-            kst,
-            wib,
-            maxOrders,
-            booked: 0,
-            enabled: true
-        }
-        
-        if (!scheduleData[dateKey]) {
-            scheduleData[dateKey] = { enabled: true, slots: [], bookings: [] }
-        }
-        scheduleData[dateKey].slots.push(newSlot)
-        showToast('Time slot added!')
+
+    const maxOrders = parseInt(document.getElementById('max-orders').value)
+    const dateKey = getDateKey(selectedDate)
+
+    if (!scheduleData[dateKey]) {
+        scheduleData[dateKey] = { enabled: true, slots: [], bookings: [] }
     }
-    
+
+    let added = 0
+    checked.forEach(cb => {
+        const kst = cb.value
+        const wib = cb.dataset.wib
+        const exists = scheduleData[dateKey].slots.find(s => s.kst === kst)
+        if (!exists) {
+            scheduleData[dateKey].slots.push({
+                id: Date.now() + Math.random(),
+                kst, wib, maxOrders, booked: 0, enabled: true
+            })
+            added++
+        }
+    })
+
+    showToast(`${added} slot berhasil ditambahkan!`)
     closeSlotModal()
     renderCalendar()
     renderTimeSlots()
