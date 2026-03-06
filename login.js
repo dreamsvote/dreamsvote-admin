@@ -1,5 +1,24 @@
 import { supabase } from './supabase.js'
 
+// ============================================
+// CHECK EXISTING SESSION
+// ============================================
+async function checkExistingSession() {
+    const { data } = await supabase.auth.getSession()
+    
+    // Kalau ada session aktif, langsung ke dashboard
+    if (data.session) {
+        window.location.replace('dashboard.html')
+        return
+    }
+    
+    // Kalau ada remember me tapi session expired, tetap di login page
+    // (Supabase handle session refresh otomatis)
+}
+
+// ============================================
+// HANDLE LOGIN
+// ============================================
 async function handleLogin(e) {
     e.preventDefault()
 
@@ -23,22 +42,19 @@ async function handleLogin(e) {
     // Simpan remember me preference
     if (rememberMe) {
         localStorage.setItem('dreamsvote_remember', 'true')
+        // Set session persistence to local (survive browser restart)
+        await supabase.auth.setSession(data.session)
     } else {
         localStorage.removeItem('dreamsvote_remember')
+        // Session only for current tab
     }
 
     window.location.replace('dashboard.html')
 }
 
-async function checkExistingSession() {
-    const { data } = await supabase.auth.getSession()
-    
-    // Kalau ada session aktif dan remember me dicentang sebelumnya, langsung ke dashboard
-    if (data.session && localStorage.getItem('dreamsvote_remember')) {
-        window.location.replace('dashboard.html')
-    }
-}
-
+// ============================================
+// TOGGLE PASSWORD VISIBILITY
+// ============================================
 function togglePassword() {
     const input = document.getElementById('password')
     const icon  = document.getElementById('eye-icon')
@@ -51,6 +67,9 @@ function togglePassword() {
     }
 }
 
+// ============================================
+// SHOW TOAST
+// ============================================
 function showToast(message) {
     const toast = document.getElementById('toast')
     document.getElementById('toast-message').textContent = message
@@ -58,9 +77,13 @@ function showToast(message) {
     setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000)
 }
 
+// ============================================
+// INITIALIZATION
+// ============================================
 document.addEventListener('DOMContentLoaded', () => {
     checkExistingSession()
     document.getElementById('login-form').addEventListener('submit', handleLogin)
 })
 
+// Export untuk global access
 window.togglePassword = togglePassword
