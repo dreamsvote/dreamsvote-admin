@@ -4,7 +4,7 @@ function handleLogin(e) {
     const password = document.getElementById('password').value;
     const rememberMe = document.getElementById('remember-me').checked;
 
-    if (username === 'admin' && password === 'admin123') {
+    if (username === 'admin' && password === 'abcd1234') {
         // Simpan data jika Remember Me dicentang
         if (rememberMe) {
             localStorage.setItem('dreamsvote_remember', JSON.stringify({
