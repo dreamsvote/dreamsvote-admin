@@ -50,9 +50,9 @@
                 <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
                 <div class="relative">
                     <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="username" required
+                    <input type="email" id="username" required
                         class="input-field w-full pl-12 pr-4 py-3 rounded-xl text-white placeholder-gray-500"
-                        placeholder="Enter username">
+                        placeholder="Enter email">
                 </div>
             </div>
 
@@ -71,7 +71,7 @@
 
             <div class="flex items-center justify-between text-sm">
                 <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" id="remember-me" class="rounded bg-surface border-gray-600 text-primary focus:ring-primary">
+                    <input type="checkbox" class="rounded bg-surface border-gray-600 text-primary focus:ring-primary">
                     <span class="text-gray-400">Remember me</span>
                 </label>
                 <a href="#" class="text-primary hover:text-secondary transition">Forgot password?</a>
@@ -83,7 +83,7 @@
         </form>
 
         <div class="mt-6 text-center text-sm text-gray-500">
-            <p>Default: admin / admin123</p>
+            
         </div>
 
         <!-- Toast -->
@@ -93,6 +93,6 @@
         </div>
     </div>
 
-    <script src="login.js"></script>
+    <script type="module" src="login.js"></script>
 </body>
 </html>
