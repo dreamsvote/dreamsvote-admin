@@ -1,4 +1,5 @@
 import { getDashboardStats } from './supabase.js'
+import { supabase } from './supabase.js'
 
 // ============================================
 // AUTH CHECK
@@ -17,8 +18,7 @@ async function checkAuth() {
 // LOGOUT - Global access
 // ============================================
 window.logout = async function() {
-    const { supabase: supabaseClient } = await import('./supabase.js')
-    await supabaseClient.auth.signOut()
+    await supabase.auth.signOut()
     localStorage.removeItem('dreamsvote_remember')
     localStorage.removeItem('sb-cirrufadyvsrswjfvabr-auth-token')
     sessionStorage.clear()
@@ -42,16 +42,18 @@ async function init() {
 
     try {
         const stats = await getDashboardStats()
-// ✅ BENAR - Ganti dengan ini:
-    document.getElementById('stat-revenue').textContent  = '$' + stats.totalRevenue.toLocaleString()
-    document.getElementById('stat-orders').textContent   = stats.totalOrders.toLocaleString()
-    document.getElementById('stat-customers').textContent = stats.totalCustomers.toLocaleString()
-    document.getElementById('stat-votes').textContent    = stats.totalVotesSold.toLocaleString()
 
-    initChart()
-    
-    // Highlight active nav
-    highlightActiveNav()
+        document.getElementById('stat-revenue').textContent  = '$' + stats.totalRevenue.toLocaleString()
+        document.getElementById('stat-orders').textContent   = stats.totalOrders.toLocaleString()
+        document.getElementById('stat-customers').textContent = stats.totalCustomers.toLocaleString()
+        document.getElementById('stat-votes').textContent    = stats.totalVotesSold.toLocaleString()
+
+        initChart()
+        highlightActiveNav()
+    } catch (error) {
+        console.error('Error loading dashboard:', error)
+        showToast('Error loading data', 'error')
+    }
 }
 
 function highlightActiveNav() {
@@ -88,6 +90,28 @@ function initChart() {
             }
         }
     })
+}
+
+// ============================================
+// SHOW TOAST
+// ============================================
+window.showToast = function(message, type = 'success') {
+    const toast = document.getElementById('toast')
+    const toastMessage = document.getElementById('toast-message')
+    const icon = toast.querySelector('i')
+    
+    if (!toast || !toastMessage) return
+    
+    toastMessage.textContent = message
+    
+    if (type === 'error') {
+        icon.className = 'fa-solid fa-circle-xmark text-red-400 text-xl'
+    } else {
+        icon.className = 'fa-solid fa-check-circle text-primary text-xl'
+    }
+    
+    toast.classList.remove('translate-y-20', 'opacity-0')
+    setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000)
 }
 
 document.addEventListener('DOMContentLoaded', init)
