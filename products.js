@@ -14,10 +14,26 @@ async function init() {
         return
     }
     
+    // Highlight nav
+    highlightActiveNav()
+    
     // Load data
     products = await getProducts()
     renderProducts()
 }
+
+// ============================================
+// HIGHLIGHT ACTIVE NAV
+// ============================================
+function highlightActiveNav() {
+    const page = window.location.pathname.split('/').pop().replace('.html', '')
+    const navEl = document.getElementById('nav-' + page)
+    if (navEl) {
+        navEl.classList.add('active')
+        navEl.classList.remove('text-gray-300')
+    }
+}
+
 
 // ============================================
 // RENDER PRODUCTS
