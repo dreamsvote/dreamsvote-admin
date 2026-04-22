@@ -32,18 +32,18 @@ async function loadStats() {
 // ============================================
 // RENDER CHART
 // ============================================
-async function renderChart() {
+async function renderChart(days = 7) {
     const ctx = document.getElementById('revenueChart').getContext('2d')
     const orders = await getOrders()
     
-    // Group by day (last 7 days by default)
-    const last7Days = [...Array(7)].map((_, i) => {
+    // Group by day (dynamic range)
+    const rangeDays = [...Array(days)].map((_, i) => {
         const d = new Date()
         d.setDate(d.getDate() - i)
         return d.toISOString().split('T')[0]
     }).reverse()
 
-    const dataUSD = last7Days.map(date => {
+    const dataUSD = rangeDays.map(date => {
         return orders
             .filter(o => o.created_at.startsWith(date) && (o.currency === 'USD' || o.currency === '$') && o.status === 'completed')
             .reduce((sum, o) => sum + parseFloat(o.total), 0)
@@ -54,7 +54,7 @@ async function renderChart() {
     chart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: last7Days.map(d => new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })),
+            labels: rangeDays.map(d => new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })),
             datasets: [{
                 label: 'Revenue (USD)',
                 data: dataUSD,
@@ -138,5 +138,9 @@ async function renderTopProducts() {
         </div>
     `).join('')
 }
+
+document.getElementById('chart-range')?.addEventListener('change', (e) => {
+    renderChart(parseInt(e.target.value));
+});
 
 document.addEventListener('DOMContentLoaded', init)

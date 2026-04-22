@@ -4,7 +4,7 @@ import { getProducts, createProduct, updateProduct, deleteProduct } from './supa
 let products = []
 
 // ============================================
-// AUTH CHECK & INIT
+// INIT
 // ============================================
 async function init() {
     const { data } = await supabase.auth.getSession()
@@ -18,11 +18,36 @@ async function init() {
 }
 
 // ============================================
-// RENDER PRODUCTS
+// FILTER & SEARCH
 // ============================================
-function renderProducts() {
+window.filterProducts = function(type) {
+    const btnAll = document.getElementById('filter-all');
+    const btnActive = document.getElementById('filter-active');
+    const btnLow = document.getElementById('filter-low');
+    
+    // Reset classes
+    [btnAll, btnActive, btnLow].forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-white');
+        btn.classList.add('text-text-muted');
+    });
+    
+    // Set active
+    const activeBtn = document.getElementById('filter-' + type);
+    activeBtn.classList.add('bg-primary', 'text-white');
+    activeBtn.classList.remove('text-text-muted');
+    
+    // Filter logic
+    let filtered = [...products];
+    if (type === 'active') filtered = products.filter(p => p.status === 'active');
+    if (type === 'low')    filtered = products.filter(p => p.stock < 10000);
+    
+    renderProducts(filtered);
+}
+
+// Update renderProducts to accept optional filtered list
+function renderProducts(data = products) {
     const grid = document.getElementById('products-grid')
-    if (!products.length) {
+    if (!data.length) {
         grid.innerHTML = `<div class="col-span-full flex flex-col items-center justify-center py-20 text-text-muted opacity-50">
             <i data-lucide="package-open" class="w-16 h-16 mb-4"></i>
             <p class="font-bold">No products found</p>
@@ -31,7 +56,7 @@ function renderProducts() {
         return
     }
 
-    grid.innerHTML = products.map(p => {
+    grid.innerHTML = data.map(p => {
         const stockPercent = Math.min((p.stock / 100000) * 100, 100)
         let stockColor = 'bg-green-500'
         if (p.stock === 0)        stockColor = 'bg-red-500'
@@ -41,14 +66,14 @@ function renderProducts() {
             <div class="card-premium p-6 relative group flex flex-col h-full">
                 <div class="flex justify-between items-start mb-6">
                     <div class="w-12 h-12 rounded-2xl bg-primary-light flex items-center justify-center font-bold text-primary text-xs">
-                        ${p.app.substring(0,2)}
+                        ${p.app ? p.app.substring(0,2) : '??'}
                     </div>
                     <div class="flex gap-2">
                         <button onclick="editProduct(${p.id})" class="w-8 h-8 rounded-lg bg-background border border-border flex items-center justify-center hover:bg-primary-light hover:text-primary transition-all">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            <i data-lucide="edit-3" class="w-4 h-4 text-text-muted"></i>
                         </button>
-                        <button onclick="confirmDeleteProduct(${p.id})" class="w-8 h-8 rounded-lg bg-background border border-border flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all text-text-muted">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        <button onclick="confirmDeleteProduct(${p.id})" class="w-8 h-8 rounded-lg bg-background border border-border flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all">
+                            <i data-lucide="trash-2" class="w-4 h-4 text-text-muted"></i>
                         </button>
                     </div>
                 </div>
@@ -100,6 +125,18 @@ function renderProducts() {
     if (window.lucide) lucide.createIcons()
 }
 
+// Add Search Listener
+document.getElementById('search-input')?.addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase();
+    const filtered = products.filter(p => 
+        p.name.toLowerCase().includes(val) || 
+        p.app.toLowerCase().includes(val) || 
+        p.type.toLowerCase().includes(val)
+    );
+    renderProducts(filtered);
+});
+
+
 // ============================================
 // MODAL FUNCTIONS
 // ============================================
@@ -120,11 +157,11 @@ window.openProductModal = function(productId = null) {
         document.getElementById('price-php').value      = p.price_php
         document.getElementById('product-stock').value  = p.stock
         document.querySelector(`input[name="status"][value="${p.status}"]`).checked = true
-        form.dataset.id = p.id
+        form.setAttribute('data-id', p.id)
     } else {
         title.textContent = 'Add Product'
         form.reset()
-        delete form.dataset.id
+        form.removeAttribute('data-id')
     }
     modal.classList.remove('hidden')
 }
@@ -138,7 +175,9 @@ window.closeProductModal = function() {
 // ============================================
 window.saveProduct = async function(e) {
     e.preventDefault()
-    const id = e.target.dataset.id
+    const form = document.getElementById('product-form')
+    const id = form.getAttribute('data-id')
+    
     const data = {
         name:      document.getElementById('product-name').value,
         app:       document.getElementById('product-app').value,
@@ -151,7 +190,7 @@ window.saveProduct = async function(e) {
         status:    document.querySelector('input[name="status"]:checked').value
     }
     
-    const btn = e.target.querySelector('button[type="submit"]')
+    const btn = form.querySelector('button[type="submit"]')
     btn.disabled = true
     btn.textContent = 'Saving...'
     
