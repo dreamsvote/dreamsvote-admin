@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DreamsVote | Orders</title>
+    <title>DreamsVote | Customers</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
@@ -28,7 +28,7 @@
         }
     </script>
     <link rel="stylesheet" href="shared.css">
-    <link rel="stylesheet" href="orders.css">
+    <link rel="stylesheet" href="customers.css">
 </head>
 <body class="bg-background text-text-main min-h-screen flex">
 
@@ -59,13 +59,13 @@
             </a>
             
             <div class="px-4 py-6 text-[11px] font-bold text-text-muted uppercase tracking-wider">Management</div>
-            <a href="orders.html" id="nav-orders" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl">
+            <a href="orders.html" id="nav-orders" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
                 <i data-lucide="shopping-cart" class="w-5 h-5"></i><span>Orders</span>
             </a>
             <a href="schedule.html" id="nav-schedule" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
                 <i data-lucide="calendar" class="w-5 h-5"></i><span>Schedule</span>
             </a>
-            <a href="customers.html" id="nav-customers" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+            <a href="customers.html" id="nav-customers" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl">
                 <i data-lucide="users" class="w-5 h-5"></i><span>Customers</span>
             </a>
         </nav>
@@ -84,66 +84,59 @@
             <div class="hidden lg:flex items-center gap-2 text-sm text-text-muted">
                 <span>Management</span>
                 <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                <span class="text-text-main font-medium">Orders</span>
+                <span class="text-text-main font-medium">Customers</span>
             </div>
 
             <div class="relative w-96">
                 <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted"></i>
-                <input type="text" id="order-search" placeholder="Search Order ID or Customer name..." class="input-field w-full pl-12 pr-4 py-2.5 rounded-xl text-sm">
+                <input type="text" id="customer-search" placeholder="Search by name, email, or username..." class="input-field w-full pl-12 pr-4 py-2.5 rounded-xl text-sm">
             </div>
         </header>
 
         <div class="p-8 fade-in">
             <div class="mb-10">
-                <h2 class="font-display text-3xl font-bold text-text-main tracking-tight mb-2">Order Management</h2>
-                <p class="text-text-muted">Track sales and validate payment proofs.</p>
+                <h2 class="font-display text-3xl font-bold text-text-main tracking-tight mb-2">Customer Database</h2>
+                <p class="text-text-muted">Monitor user activity and purchase history.</p>
             </div>
 
             <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                <div class="card-premium p-6 border-l-4 border-l-primary">
-                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Total Orders</p>
-                    <h3 class="text-2xl font-bold text-text-main" id="stat-total-orders">0</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="card-premium p-6">
+                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Total Users</p>
+                    <h3 class="text-2xl font-bold text-text-main" id="stat-total-users">0</h3>
                 </div>
-                <div class="card-premium p-6 border-l-4 border-l-amber-500">
-                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Pending</p>
-                    <h3 class="text-2xl font-bold text-text-main" id="stat-pending-orders">0</h3>
+                <div class="card-premium p-6">
+                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Active Today</p>
+                    <h3 class="text-2xl font-bold text-text-main" id="stat-active-today">0</h3>
                 </div>
-                <div class="card-premium p-6 border-l-4 border-l-green-500">
-                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Completed</p>
-                    <h3 class="text-2xl font-bold text-text-main" id="stat-completed-orders">0</h3>
-                </div>
-                <div class="card-premium p-6 border-l-4 border-l-red-500">
-                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Proof Needed</p>
-                    <h3 class="text-2xl font-bold text-text-main" id="stat-proof-needed">0</h3>
+                <div class="card-premium p-6">
+                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">New this Week</p>
+                    <h3 class="text-2xl font-bold text-text-main" id="stat-new-users">0</h3>
                 </div>
             </div>
 
             <!-- Table Card -->
             <div class="card-premium overflow-hidden">
                 <div class="p-6 border-b border-border flex justify-between items-center bg-background/30">
-                    <div class="flex gap-4">
-                        <button class="px-5 py-2 rounded-lg bg-primary text-white text-xs font-bold shadow-lg shadow-primary/20">All Orders</button>
-                        <button class="px-5 py-2 rounded-lg bg-white border border-border text-text-muted hover:text-primary text-xs font-bold transition-all">Unpaid</button>
-                    </div>
+                    <h3 class="font-bold text-lg text-text-main">User Directory</h3>
                     <button class="text-text-muted hover:text-primary transition-colors">
-                        <i data-lucide="filter" class="w-5 h-5"></i>
+                        <i data-lucide="download" class="w-5 h-5"></i>
                     </button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead class="bg-background text-text-muted text-[10px] uppercase tracking-widest font-bold">
                             <tr>
-                                <th class="px-8 py-4">Order ID</th>
                                 <th class="px-8 py-4">Customer</th>
-                                <th class="px-8 py-4">Total</th>
+                                <th class="px-8 py-4">Contact</th>
+                                <th class="px-8 py-4">Total Spent</th>
+                                <th class="px-8 py-4">Orders</th>
                                 <th class="px-8 py-4">Status</th>
-                                <th class="px-8 py-4">Payment</th>
-                                <th class="px-8 py-4">Date</th>
+                                <th class="px-8 py-4">Joined</th>
                                 <th class="px-8 py-4">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-border text-sm" id="order-table-body">
+                        <tbody class="divide-y divide-border text-sm" id="customer-table-body">
                             <!-- Dynamic rows -->
                         </tbody>
                     </table>
@@ -152,23 +145,19 @@
         </div>
     </main>
 
-    <!-- Order Detail Modal -->
-    <div id="order-modal" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-text-main/20 backdrop-blur-sm" onclick="closeOrderModal()"></div>
-        <div class="absolute inset-y-0 right-0 max-w-2xl w-full bg-surface shadow-2xl flex flex-col fade-in">
+    <!-- Customer Detail Modal -->
+    <div id="customer-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-text-main/20 backdrop-blur-sm" onclick="closeCustomerModal()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-xl w-full bg-surface shadow-2xl flex flex-col fade-in">
             <div class="p-8 border-b border-border flex justify-between items-center">
-                <h3 class="font-display text-2xl font-bold text-text-main" id="modal-order-id">Order Details</h3>
-                <button onclick="closeOrderModal()" class="w-10 h-10 rounded-xl hover:bg-background flex items-center justify-center transition-colors">
+                <h3 class="font-display text-2xl font-bold text-text-main">Customer Profile</h3>
+                <button onclick="closeCustomerModal()" class="w-10 h-10 rounded-xl hover:bg-background flex items-center justify-center transition-colors">
                     <i data-lucide="x" class="w-5 h-5 text-text-muted"></i>
                 </button>
             </div>
             
-            <div id="order-details-content" class="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
+            <div id="customer-details-content" class="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
                 <!-- Dynamic content -->
-            </div>
-
-            <div class="p-8 border-t border-border bg-background/50 flex gap-4" id="modal-actions">
-                <!-- Action buttons -->
             </div>
         </div>
     </div>
@@ -182,7 +171,7 @@
     </div>
 
     <script src="shared.js"></script>
-    <script type="module" src="orders.js"></script>
+    <script type="module" src="customers.js"></script>
     <script>
         lucide.createIcons();
     </script>

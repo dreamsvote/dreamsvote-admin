@@ -1,91 +1,45 @@
 import { supabase } from './supabase.js'
 
-// ============================================
-// CHECK EXISTING SESSION - Hanya kalau remember me
-// ============================================
-async function checkExistingSession() {
-    const rememberMe = localStorage.getItem('dreamsvote_remember')
-    
-    // Kalau tidak ada remember me, tetap di login page
-    if (!rememberMe) {
-        return
-    }
-    
-    // Kalau remember me ada, cek session
+async function init() {
+    // Redirect if already logged in
     const { data } = await supabase.auth.getSession()
-    
     if (data.session) {
         window.location.replace('dashboard.html')
     }
-    // Kalau session expired tapi remember me ada, biarkan di login page
-    // User harus login ulang
 }
 
-// ============================================
-// HANDLE LOGIN
-// ============================================
-async function handleLogin(e) {
+document.getElementById('login-form').onsubmit = async (e) => {
     e.preventDefault()
-
-    const email      = document.getElementById('username').value
-    const password   = document.getElementById('password').value
-    const rememberMe = document.getElementById('remember-me').checked
-    const btn        = document.querySelector('button[type="submit"]')
-
+    const email = document.getElementById('email').value
+    const password = document.getElementById('password').value
+    const remember = document.getElementById('remember').checked
+    
+    const btn = document.getElementById('login-btn')
     btn.disabled = true
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Signing in...'
+    btn.innerHTML = `
+        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Signing in...</span>
+    `
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    })
 
     if (error) {
-        showToast('Email atau password salah!')
+        alert('Login failed: ' + error.message)
         btn.disabled = false
-        btn.innerHTML = 'Sign In <i class="fa-solid fa-arrow-right ml-2"></i>'
-        return
-    }
-
-    // Simpan remember me preference
-    if (rememberMe) {
-        localStorage.setItem('dreamsvote_remember', 'true')
+        btn.innerHTML = '<span>Sign In to Console</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>'
+        if (window.lucide) lucide.createIcons()
     } else {
-        localStorage.removeItem('dreamsvote_remember')
-    }
-
-    window.location.replace('dashboard.html')
-}
-
-// ============================================
-// TOGGLE PASSWORD VISIBILITY
-// ============================================
-function togglePassword() {
-    const input = document.getElementById('password')
-    const icon  = document.getElementById('eye-icon')
-    if (input.type === 'password') {
-        input.type = 'text'
-        icon.classList.replace('fa-eye', 'fa-eye-slash')
-    } else {
-        input.type = 'password'
-        icon.classList.replace('fa-eye-slash', 'fa-eye')
+        if (remember) {
+            localStorage.setItem('dreamsvote_remember', 'true')
+        }
+        window.location.replace('dashboard.html')
     }
 }
 
-// ============================================
-// SHOW TOAST
-// ============================================
-function showToast(message) {
-    const toast = document.getElementById('toast')
-    document.getElementById('toast-message').textContent = message
-    toast.classList.remove('translate-y-20', 'opacity-0')
-    setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000)
-}
-
-// ============================================
-// INITIALIZATION
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-    checkExistingSession()
-    document.getElementById('login-form').addEventListener('submit', handleLogin)
-})
-
-// Export untuk global access
-window.togglePassword = togglePassword
+document.addEventListener('DOMContentLoaded', init)

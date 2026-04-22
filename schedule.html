@@ -3,16 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DreamsVote | Schedule</title>
+    <title>DreamsVote | Vote Schedule</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter','sans-serif'], display: ['Space Grotesk','sans-serif'] },
-                    colors: { primary:'#8B5CF6', secondary:'#EC4899', accent:'#3B82F6', dark:'#0F172A', darker:'#020617', surface:'#1E293B' }
+                    fontFamily: { sans: ['Inter','sans-serif'], display: ['Outfit','sans-serif'] },
+                    colors: { 
+                        primary: '#8A2A2B',
+                        'primary-hover': '#702223',
+                        'primary-light': 'rgba(138, 42, 43, 0.05)',
+                        surface: '#FFFFFF',
+                        background: '#F8FAFC',
+                        border: '#E2E8F0',
+                        'text-main': '#1E293B',
+                        'text-muted': '#64748B'
+                    }
                 }
             }
         }
@@ -20,213 +30,220 @@
     <link rel="stylesheet" href="shared.css">
     <link rel="stylesheet" href="schedule.css">
 </head>
-<body class="min-h-screen flex">
+<body class="bg-background text-text-main min-h-screen flex">
 
     <!-- Sidebar -->
-    <aside class="w-64 glass border-r border-white/10 fixed h-full z-40 hidden md:flex flex-col">
-        <div class="p-6 border-b border-white/10">
+    <aside class="w-72 bg-surface border-r border-border fixed h-full z-40 hidden lg:flex flex-col">
+        <div class="p-8">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold shadow-lg">DV</div>
+                <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                    <i data-lucide="vote" class="text-white w-6 h-6"></i>
+                </div>
                 <div>
-                    <h1 class="font-display font-bold text-lg">DreamsVote</h1>
-                    <p class="text-xs text-gray-400">Admin Panel</p>
+                    <h1 class="font-display font-bold text-xl tracking-tight text-primary">DreamsVote</h1>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">Admin Console</p>
                 </div>
             </div>
         </div>
-        <nav class="flex-1 py-6 space-y-1 overflow-y-auto custom-scrollbar">
-            <a href="dashboard.html" id="nav-dashboard" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-chart-line w-5"></i><span>Dashboard</span></a>
-            <a href="products.html"  id="nav-products"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-box w-5"></i><span>Products</span></a>
-            <a href="vouchers.html"  id="nav-vouchers"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-ticket w-5"></i><span>Vouchers</span></a>
-            <a href="orders.html"    id="nav-orders"    class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-shopping-cart w-5"></i><span>Orders</span></a>
-            <a href="schedule.html"  id="nav-schedule"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-calendar-days w-5"></i><span>Schedule</span></a>
-            <a href="customers.html" id="nav-customers" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-users w-5"></i><span>Customers</span></a>
+
+        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+            <div class="px-4 py-2 text-[11px] font-bold text-text-muted uppercase tracking-wider">Main Menu</div>
+            <a href="dashboard.html" id="nav-dashboard" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span>
+            </a>
+            <a href="products.html" id="nav-products" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="package" class="w-5 h-5"></i><span>Products</span>
+            </a>
+            <a href="vouchers.html" id="nav-vouchers" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="ticket" class="w-5 h-5"></i><span>Vouchers</span>
+            </a>
+            
+            <div class="px-4 py-6 text-[11px] font-bold text-text-muted uppercase tracking-wider">Management</div>
+            <a href="orders.html" id="nav-orders" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i><span>Orders</span>
+            </a>
+            <a href="schedule.html" id="nav-schedule" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="calendar" class="w-5 h-5"></i><span>Schedule</span>
+            </a>
+            <a href="customers.html" id="nav-customers" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="users" class="w-5 h-5"></i><span>Customers</span>
+            </a>
         </nav>
-        <div class="p-6 border-t border-white/10">
-            <div class="flex items-center gap-3 mb-4">
-                <img src="https://ui-avatars.com/api/?name=Admin&background=8B5CF6&color=fff" class="w-10 h-10 rounded-full">
-                <div>
-                    <p class="font-medium text-sm">Administrator</p>
-                    <p class="text-xs text-gray-400"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b7d6d3daded9f7d3c5d2d6dac4c1d8c3d299d4d8da">[email&#160;protected]</a></p>
-                </div>
-            </div>
-            <button onclick="logout()" class="w-full py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition text-sm font-medium">
-                <i class="fa-solid fa-sign-out-alt mr-2"></i>Logout
+
+        <div class="p-6 border-t border-border bg-background/50">
+            <button onclick="logout()" class="w-full py-2.5 rounded-xl bg-white border border-border text-red-600 hover:bg-red-50 hover:border-red-100 transition-all text-sm font-semibold flex items-center justify-center gap-2">
+                <i data-lucide="log-out" class="w-4 h-4"></i>Logout
             </button>
         </div>
     </aside>
 
-    <!-- Mobile Header -->
-    <div class="md:hidden fixed top-0 w-full glass border-b border-white/10 z-30 px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-sm">DV</div>
-            <span class="font-display font-bold">DreamsVote</span>
-        </div>
-        <button onclick="toggleMobileMenu()" class="p-2"><i class="fa-solid fa-bars text-xl"></i></button>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-darker/95 backdrop-blur-lg hidden md:hidden pt-16">
-        <div class="p-4 space-y-2">
-            <a href="dashboard.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Dashboard</a>
-            <a href="products.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Products</a>
-            <a href="vouchers.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Vouchers</a>
-            <a href="orders.html"    class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Orders</a>
-            <a href="schedule.html"   class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Schedule</a>
-            <a href="customers.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Customers</a>
-            <button onclick="logout()" class="w-full p-4 rounded-xl bg-red-500/10 text-red-400 text-left">Logout</button>
-        </div>
-    </div>
-
     <!-- Main Content -->
-    <main class="flex-1 md:ml-64 pt-16 md:pt-0">
-        <div class="p-6 md:p-8 fade-in">
-
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h2 class="font-display text-3xl font-bold mb-1">Vote Schedule</h2>
-                    <p class="text-gray-400">Manage voting time slots and availability</p>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="toggleDateStatus()" id="date-toggle-btn" class="px-4 py-2 rounded-lg glass text-sm hover:bg-white/10 transition">
-                        <i class="fa-solid fa-power-off mr-2"></i>Disable Date
-                    </button>
-                    <button onclick="openSlotModal()" class="px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl font-bold hover:shadow-lg hover:shadow-primary/25 transition">
-                        <i class="fa-solid fa-plus mr-2"></i>Add Time Slot
-                    </button>
-                </div>
+    <main class="flex-1 lg:ml-72 transition-all duration-300">
+        <!-- Top Header -->
+        <header class="h-20 bg-surface/80 backdrop-blur-md border-b border-border sticky top-0 z-30 px-8 flex items-center justify-between">
+            <div class="hidden lg:flex items-center gap-2 text-sm text-text-muted">
+                <span>Management</span>
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                <span class="text-text-main font-medium">Vote Schedule</span>
             </div>
 
-            <!-- Calendar & Time Slots Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="flex gap-4">
+                <button onclick="toggleDateStatus()" id="date-toggle-btn" class="px-5 py-2.5 rounded-xl bg-white border border-border text-text-muted hover:text-primary transition-all text-sm font-bold flex items-center gap-2">
+                    <i data-lucide="power" class="w-4 h-4"></i>Disable Date
+                </button>
+                <button onclick="openSlotModal()" id="add-slot-btn" class="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i data-lucide="plus" class="w-4 h-4"></i>Add Time Slot
+                </button>
+            </div>
+        </header>
+
+        <div class="p-8 fade-in">
+            <div class="mb-10">
+                <h2 class="font-display text-3xl font-bold text-text-main tracking-tight mb-2">Vote Schedule</h2>
+                <p class="text-text-muted">Manage voting availability and time slot allocations.</p>
+            </div>
+
+            <!-- Calendar & Slots Grid -->
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 
-                <!-- Calendar Section -->
-                <div class="lg:col-span-1">
-                    <div class="glass rounded-2xl p-6 border border-white/5">
-                        <div class="flex justify-between items-center mb-6">
-                            <button onclick="changeMonth(-1)" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
-                                <i class="fa-solid fa-chevron-left"></i>
+                <!-- Left: Calendar -->
+                <div class="xl:col-span-1">
+                    <div class="card-premium p-8">
+                        <div class="flex justify-between items-center mb-8">
+                            <button onclick="changeMonth(-1)" class="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center hover:bg-primary-light hover:text-primary transition-all">
+                                <i data-lucide="chevron-left" class="w-5 h-5"></i>
                             </button>
-                            <h3 class="font-bold text-lg" id="current-month">January 2024</h3>
-                            <button onclick="changeMonth(1)" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
-                                <i class="fa-solid fa-chevron-right"></i>
+                            <h3 class="font-bold text-lg" id="current-month">April 2026</h3>
+                            <button onclick="changeMonth(1)" class="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center hover:bg-primary-light hover:text-primary transition-all">
+                                <i data-lucide="chevron-right" class="w-5 h-5"></i>
                             </button>
                         </div>
                         
-                        <!-- Weekday Headers -->
-                        <div class="grid grid-cols-7 gap-1 mb-2 text-center text-xs text-gray-400 uppercase">
+                        <div class="grid grid-cols-7 gap-2 mb-4 text-center text-[10px] font-bold text-text-muted uppercase tracking-widest">
                             <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                         </div>
                         
-                        <!-- Calendar Days -->
-                        <div class="grid grid-cols-7 gap-1" id="calendar-grid"></div>
+                        <div class="grid grid-cols-7 gap-2" id="calendar-grid">
+                            <!-- Calendar days -->
+                        </div>
                         
                         <!-- Legend -->
-                        <div class="mt-6 pt-4 border-t border-white/10 space-y-2 text-sm">
-                            <div class="flex items-center gap-2">
-                                <div class="w-4 h-4 rounded bg-primary/20 border border-primary/50"></div>
-                                <span class="text-gray-400">Selected Date</span>
+                        <div class="mt-10 pt-6 border-t border-border space-y-3">
+                            <div class="flex items-center gap-3 text-xs font-bold text-text-muted">
+                                <div class="w-4 h-4 rounded-md bg-primary shadow-lg shadow-primary/20"></div>
+                                <span>Selected Date</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <div class="w-4 h-4 rounded bg-green-500/20 border border-green-500/50"></div>
-                                <span class="text-gray-400">Available</span>
+                            <div class="flex items-center gap-3 text-xs font-bold text-text-muted">
+                                <div class="w-4 h-4 rounded-md bg-green-500 shadow-lg shadow-green-500/20"></div>
+                                <span>Available</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <div class="w-4 h-4 rounded bg-red-500/20 border border-red-500/50"></div>
-                                <span class="text-gray-400">Disabled</span>
+                            <div class="flex items-center gap-3 text-xs font-bold text-text-muted">
+                                <div class="w-4 h-4 rounded-md bg-red-500 shadow-lg shadow-red-500/20"></div>
+                                <span>Disabled</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <div class="w-4 h-4 rounded bg-yellow-500/20 border border-yellow-500/50"></div>
-                                <span class="text-gray-400">Has Bookings</span>
+                            <div class="flex items-center gap-3 text-xs font-bold text-text-muted">
+                                <div class="w-4 h-4 rounded-md bg-amber-500 shadow-lg shadow-amber-500/20"></div>
+                                <span>Has Bookings</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Time Slots Section -->
-                <div class="lg:col-span-2">
-                    <div class="glass rounded-2xl p-6 border border-white/5 h-full">
-                        <div class="flex justify-between items-center mb-6">
+                <!-- Right: Time Slots & Bookings -->
+                <div class="xl:col-span-2 space-y-8">
+                    <!-- Slots Container -->
+                    <div class="card-premium p-8 h-full min-h-[400px]">
+                        <div class="flex justify-between items-center mb-10">
                             <div>
-                                <h3 class="font-bold text-lg" id="selected-date-display">Select a date</h3>
-                                <p class="text-sm text-gray-400 mt-1" id="date-status-display">Choose date to manage slots</p>
+                                <h3 class="font-display text-2xl font-bold text-text-main" id="selected-date-display">Select a date</h3>
+                                <p class="text-sm text-text-muted mt-1" id="date-status-display">Choose a date to manage availability</p>
                             </div>
-                            <div class="flex gap-2">
-                                <span class="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium" id="total-slots">0 slots</span>
-                                <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium" id="available-slots">0 available</span>
-                            </div>
-                        </div>
-
-                        <!-- Time Slots Grid -->
-                        <div id="time-slots-container" class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            <div class="col-span-full text-center py-12 text-gray-400">
-                                <i class="fa-solid fa-calendar-check text-5xl mb-4 block text-gray-600"></i>
-                                <p>Select a date to view time slots</p>
+                            <div class="flex gap-3">
+                                <span class="px-4 py-1.5 rounded-full bg-primary-light text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/10" id="total-slots">0 SLOTS</span>
+                                <span class="px-4 py-1.5 rounded-full bg-green-50 text-green-600 text-[10px] font-bold uppercase tracking-widest border border-green-100" id="available-slots">0 AVAILABLE</span>
                             </div>
                         </div>
 
-                        <!-- Bookings List (if any) -->
-                        <div id="bookings-section" class="mt-8 pt-6 border-t border-white/10 hidden">
-                            <h4 class="font-bold mb-4 flex items-center gap-2">
-                                <i class="fa-solid fa-list-check text-primary"></i>
+                        <!-- Slots Grid -->
+                        <div id="time-slots-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="col-span-full flex flex-col items-center justify-center py-20 text-text-muted opacity-50">
+                                <i data-lucide="calendar-days" class="w-16 h-16 mb-4"></i>
+                                <p class="font-bold">Select a date to view time slots</p>
+                            </div>
+                        </div>
+
+                        <!-- Bookings Section -->
+                        <div id="bookings-section" class="mt-12 pt-8 border-t border-border hidden">
+                            <h4 class="font-display text-xl font-bold text-text-main mb-6 flex items-center gap-3">
+                                <i data-lucide="clipboard-list" class="text-primary w-6 h-6"></i>
                                 Bookings for this date
                             </h4>
-                            <div class="space-y-3" id="bookings-list"></div>
+                            <div class="space-y-4" id="bookings-list">
+                                <!-- Bookings list -->
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </main>
 
-    <!-- Time Slot Modal -->
+    <!-- Slot Modal -->
     <div id="slot-modal" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeSlotModal()"></div>
-        <div class="absolute inset-0 flex items-center justify-center p-4">
-            <div class="glass rounded-3xl p-8 max-w-md w-full relative">
-                <button onclick="closeSlotModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
-                    <i class="fa-solid fa-xmark"></i>
+        <div class="absolute inset-0 bg-text-main/20 backdrop-blur-sm" onclick="closeSlotModal()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-xl w-full bg-surface shadow-2xl flex flex-col fade-in">
+            <div class="p-8 border-b border-border flex justify-between items-center">
+                <h3 class="font-display text-2xl font-bold text-text-main">Add Time Slot</h3>
+                <button onclick="closeSlotModal()" class="w-10 h-10 rounded-xl hover:bg-background flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="w-5 h-5 text-text-muted"></i>
                 </button>
-                <h3 class="font-display text-2xl font-bold mb-6">Add Time Slot</h3>
-                <form id="slot-form" onsubmit="saveTimeSlot(event)" class="space-y-6">
-
-                    <!-- KST Checkbox Grid -->
-                    <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <label class="block text-sm font-medium text-gray-300">KST Time (Korea Standard Time)</label>
-                            <div class="flex gap-2 text-xs">
-                                <button type="button" onclick="selectAllTimes()" class="px-2 py-1 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition">All</button>
-                                <button type="button" onclick="clearAllTimes()" class="px-2 py-1 rounded-lg bg-white/10 text-gray-400 hover:bg-white/20 transition">Clear</button>
-                            </div>
+            </div>
+            
+            <form id="slot-form" onsubmit="saveTimeSlot(event)" class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <p class="text-[11px] font-bold text-primary uppercase tracking-widest">Select KST Time Slots</p>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="selectAllTimes()" class="text-[10px] font-bold text-primary hover:underline px-2 py-1">ALL</button>
+                            <button type="button" onclick="clearAllTimes()" class="text-[10px] font-bold text-text-muted hover:underline px-2 py-1">CLEAR</button>
                         </div>
-                        <div class="grid grid-cols-4 gap-2" id="kst-checkbox-grid">
-                            <!-- Generated by JS -->
-                        </div>
-                        <p class="text-xs text-gray-500 mt-2">WIB = KST - 2 jam (otomatis)</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3" id="kst-checkbox-grid">
+                        <!-- Generated via JS -->
+                    </div>
+                    
+                    <div class="p-4 rounded-xl bg-background border border-border flex items-center gap-3 text-xs text-text-muted italic">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        WIB time will be calculated automatically (KST - 2 hours)
                     </div>
 
-                    <!-- Max Orders -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Max Orders per Slot</label>
-                        <input type="number" id="max-orders" min="1" value="5" required class="input-field w-full px-4 py-3 rounded-xl text-white">
+                    <div class="pt-4">
+                        <label class="block text-xs font-bold text-text-muted uppercase mb-4">Max Orders per Slot</label>
+                        <input type="number" id="max-orders" min="1" value="5" required class="input-field w-full px-4 py-3 rounded-xl font-bold">
                     </div>
+                </div>
+            </form>
 
-                    <div class="flex gap-3 pt-4">
-                        <button type="button" onclick="closeSlotModal()" class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 font-medium transition">Cancel</button>
-                        <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary font-bold hover:shadow-lg transition">Add Slots</button>
-                    </div>
-                </form>
+            <div class="p-8 border-t border-border bg-background/50 flex gap-4">
+                <button type="button" onclick="closeSlotModal()" class="flex-1 py-4 rounded-xl border border-border font-bold text-text-muted hover:bg-white transition-colors">Cancel</button>
+                <button type="submit" form="slot-form" class="flex-[2] btn-primary py-4 rounded-xl font-bold shadow-lg shadow-primary/20">Add Slots</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-8 right-8 glass px-6 py-4 rounded-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
-        <i class="fa-solid fa-check-circle text-primary text-xl"></i>
-        <span id="toast-message" class="font-medium"></span>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 right-8 px-6 py-4 rounded-2xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-500 z-50">
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+            <i data-lucide="check" class="text-white w-4 h-4"></i>
+        </div>
+        <span id="toast-message" class="font-bold text-sm"></span>
     </div>
 
     <script src="shared.js"></script>
     <script type="module" src="schedule.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
