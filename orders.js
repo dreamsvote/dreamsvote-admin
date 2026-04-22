@@ -1,231 +1,97 @@
-import { supabase } from './supabase.js'
+import { supabase, getOrders, updateOrderStatus } from './supabase.js'
 
 let orders = []
-let currentFilter = 'all'
-let currentOrderId = null
 
-// ================================================
-// INIT
-// ================================================
-async function init() {
-    await loadOrders()
+// --- BIND TO WINDOW IMMEDIATELY ---
+window.viewOrderDetail = function(id) {
+    const o = orders.find(x => x.id === id)
+    const modal = document.getElementById('order-modal')
+    const content = document.getElementById('order-details-content')
+    const actions = document.getElementById('modal-actions')
+    if (!modal || !o) return
+    
+    document.getElementById('modal-order-id').textContent = `Order #${o.id.substring(0,8).toUpperCase()}`
+    
+    content.innerHTML = `
+        <div class="grid grid-cols-2 gap-8">
+            <div class="space-y-6">
+                <div>
+                    <p class="text-[10px] font-bold text-text-muted uppercase mb-2">Customer</p>
+                    <div class="p-4 rounded-xl bg-background border border-border">
+                        <p class="font-bold text-sm">${o.user_name || 'Customer'}</p>
+                        <p class="text-xs text-text-muted">${o.user_email || ''}</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-[10px] font-bold text-text-muted uppercase mb-2">Summary</p>
+                    <div class="p-4 rounded-xl bg-background border border-border space-y-2">
+                        <div class="flex justify-between font-bold text-primary">
+                            <span>Total</span>
+                            <span>${o.currency==='IDR'?'Rp ':'$'}${o.total.toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-text-muted uppercase mb-2">Proof</p>
+                <div class="aspect-square rounded-xl border-2 border-dashed border-border overflow-hidden bg-background">
+                    ${o.payment_proof_url ? `<img src="${o.payment_proof_url}" class="w-full h-full object-contain">` : '<p class="text-center p-10 text-xs text-text-muted italic">No proof</p>'}
+                </div>
+            </div>
+        </div>
+    `
+    
+    actions.innerHTML = `
+        <button onclick="closeOrderModal()" class="flex-1 py-3 rounded-xl border border-border font-bold text-xs text-text-muted">Close</button>
+        ${o.status === 'pending' ? `
+            <button onclick="updateStatus('${o.id}', 'completed')" class="flex-[2] btn-primary py-3 rounded-xl font-bold text-xs">Complete Order</button>
+        ` : ''}
+    `
+    modal.classList.remove('hidden')
+    if (window.lucide) lucide.createIcons()
 }
 
-async function loadOrders() {
-    const { data, error } = await supabase
-        .from('orders')
-        .select(`*, order_items(*)`)
-        .order('created_at', { ascending: false })
+window.closeOrderModal = () => document.getElementById('order-modal').classList.add('hidden')
 
-    if (error) { console.error(error); return }
-    orders = data || []
-    updateStats()
-    renderOrders()
+window.updateStatus = async (id, status) => {
+    const updated = await updateOrderStatus(id, status)
+    if (updated) {
+        const idx = orders.findIndex(x => x.id === id)
+        orders[idx].status = status
+        renderOrders()
+        window.closeOrderModal()
+        showToast(`Order ${status}`)
+    }
 }
 
-// ================================================
-// STATS
-// ================================================
-function updateStats() {
-    document.getElementById('stat-total').textContent     = orders.length
-    document.getElementById('stat-pending').textContent   = orders.filter(o => o.status === 'pending').length
-    document.getElementById('stat-completed').textContent = orders.filter(o => o.status === 'completed').length
-    document.getElementById('stat-noproof').textContent   = orders.filter(o => !o.proof_url).length
-}
+window.viewProof = (url) => window.open(url, '_blank')
 
-// ================================================
-// RENDER
-// ================================================
+// --- RENDERING ---
 function renderOrders() {
-    const search = document.getElementById('search-input').value.toLowerCase()
-    const tbody  = document.getElementById('orders-tbody')
-
-    let filtered = orders
-    if (currentFilter !== 'all') filtered = filtered.filter(o => o.status === currentFilter)
-    if (search) filtered = filtered.filter(o =>
-        o.order_code?.toLowerCase().includes(search) ||
-        o.customer_name?.toLowerCase().includes(search) ||
-        o.customer_email?.toLowerCase().includes(search)
-    )
-
-    if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-gray-400">
-            <i class="fa-solid fa-box-open text-5xl mb-4 block text-gray-600"></i>
-            Tidak ada order
-        </td></tr>`
+    const tbody = document.getElementById('order-table-body')
+    if (!tbody) return
+    if (!orders.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="px-8 py-10 text-center text-text-muted italic text-xs">No orders found</td></tr>`
         return
     }
-
-    tbody.innerHTML = filtered.map(o => {
-        const statusClass = {
-            pending:         'status-pending',
-            waiting_payment: 'status-waiting',
-            paid:            'status-paid',
-            processing:      'status-processing',
-            completed:       'status-completed',
-            cancelled:       'status-cancelled'
-        }[o.status] || 'status-pending'
-
-        const statusLabel = {
-            pending:         'Pending',
-            waiting_payment: 'Waiting Payment',
-            paid:            'Paid',
-            processing:      'Processing',
-            completed:       'Completed',
-            cancelled:       'Cancelled'
-        }[o.status] || o.status
-
-        const hasProof   = !!o.proof_url
-        const proofClass = hasProof ? 'proof-uploaded' : 'proof-not-yet'
-        const proofLabel = hasProof ? 'Uploaded' : 'Not Yet'
-
-        const proofBtn = hasProof
-            ? `<a href="${o.proof_url}" target="_blank" onclick="event.stopPropagation()"
-                class="px-3 py-1 rounded-lg bg-primary/20 text-primary text-xs font-medium hover:bg-primary/30 transition">
-                <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Open
-               </a>`
-            : `<span class="text-gray-600 text-xs">—</span>`
-
-        const date = new Date(o.created_at).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })
-
-        return `
-            <tr onclick="openDetailModal('${o.id}')" class="hover:bg-white/5 transition">
-                <td class="px-4 py-3 font-mono font-bold text-primary text-xs">${o.order_code}</td>
-                <td class="px-4 py-3">
-                    <p class="font-medium">${o.customer_name}</p>
-                    <p class="text-xs text-gray-400">${o.customer_email}</p>
-                </td>
-                <td class="px-4 py-3 font-bold">$${parseFloat(o.total).toFixed(2)}</td>
-                <td class="px-4 py-3"><span class="status-badge ${statusClass}">${statusLabel}</span></td>
-                <td class="px-4 py-3"><span class="status-badge ${proofClass}">${proofLabel}</span></td>
-                <td class="px-4 py-3">${proofBtn}</td>
-                <td class="px-4 py-3 text-gray-400 text-xs">${date}</td>
-                <td class="px-4 py-3">
-                    <button onclick="event.stopPropagation(); openDetailModal('${o.id}')"
-                        class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs transition">
-                        Detail
-                    </button>
-                </td>
-            </tr>
-        `
-    }).join('')
+    tbody.innerHTML = orders.map(o => `
+        <tr class="hover:bg-primary-light/30 transition-all text-xs">
+            <td class="px-8 py-4 font-mono">#${o.id.substring(0,8)}</td>
+            <td class="px-8 py-4 font-bold">${o.user_name || 'Customer'}</td>
+            <td class="px-8 py-4 font-bold text-primary">${o.currency==='IDR'?'Rp ':'$'}${o.total.toLocaleString()}</td>
+            <td class="px-8 py-4"><span class="px-2 py-1 rounded text-[9px] font-bold uppercase ${o.status==='completed'?'bg-green-50 text-green-600':'bg-amber-50 text-amber-600'}">${o.status}</span></td>
+            <td class="px-8 py-4">${o.payment_proof_url?'<span class="text-primary font-bold">YES</span>':'NO'}</td>
+            <td class="px-8 py-4 text-text-muted">${new Date(o.created_at).toLocaleDateString()}</td>
+            <td class="px-8 py-4"><button onclick="viewOrderDetail('${o.id}')" class="text-text-muted hover:text-primary"><i data-lucide="eye" class="w-4 h-4"></i></button></td>
+        </tr>
+    `).join('')
+    if (window.lucide) lucide.createIcons()
 }
 
-// ================================================
-// FILTER & SEARCH
-// ================================================
-window.setFilter = function(filter, el) {
-    currentFilter = filter
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'))
-    el.classList.add('active')
+// --- INIT ---
+document.addEventListener('DOMContentLoaded', async () => {
+    const { data } = await supabase.auth.getSession()
+    if (!data.session) return window.location.replace('login.html')
+    orders = await getOrders()
     renderOrders()
-}
-
-window.filterOrders = renderOrders
-
-// ================================================
-// DETAIL MODAL
-// ================================================
-window.openDetailModal = function(orderId) {
-    const o = orders.find(x => x.id === orderId)
-    if (!o) return
-    currentOrderId = orderId
-
-    document.getElementById('modal-order-id').textContent   = o.order_code
-    document.getElementById('modal-order-date').textContent = new Date(o.created_at).toLocaleString('id-ID')
-    document.getElementById('modal-customer-name').textContent  = o.customer_name || '-'
-    document.getElementById('modal-customer-email').textContent = o.customer_email || '-'
-    document.getElementById('modal-customer-wa').textContent    = o.customer_whatsapp || '-'
-    document.getElementById('modal-subtotal').textContent = '$' + parseFloat(o.subtotal || 0).toFixed(2)
-    document.getElementById('modal-total').textContent    = '$' + parseFloat(o.total).toFixed(2)
-
-    // Discount
-    const discountRow = document.getElementById('modal-discount-row')
-    if (o.discount && o.discount > 0) {
-        discountRow.classList.remove('hidden')
-        document.getElementById('modal-discount').textContent = '-$' + parseFloat(o.discount).toFixed(2)
-    } else {
-        discountRow.classList.add('hidden')
-    }
-
-    // Items
-    const items = o.order_items || []
-    document.getElementById('modal-items').innerHTML = items.map(item => `
-        <div class="flex justify-between text-sm">
-            <span class="text-gray-300">${item.product_name} <span class="text-gray-500">x${item.quantity}</span></span>
-            <span class="font-medium">$${parseFloat(item.subtotal).toFixed(2)}</span>
-        </div>
-    `).join('') || '<p class="text-gray-500 text-sm">Tidak ada item</p>'
-
-    // Schedule
-    const schedSection = document.getElementById('modal-schedule-section')
-    if (o.scheduled_date) {
-        schedSection.classList.remove('hidden')
-        document.getElementById('modal-sched-date').textContent = o.scheduled_date
-        document.getElementById('modal-sched-kst').textContent  = o.scheduled_kst || '-'
-        document.getElementById('modal-sched-wib').textContent  = o.scheduled_wib || '-'
-    } else {
-        schedSection.classList.add('hidden')
-    }
-
-    // Proof
-    const proofInput = document.getElementById('modal-proof-input')
-    const proofLink  = document.getElementById('modal-proof-link')
-    const proofUrl   = document.getElementById('modal-proof-url')
-    proofInput.value = o.proof_url || ''
-    if (o.proof_url) {
-        proofLink.classList.remove('hidden')
-        proofUrl.href = o.proof_url
-    } else {
-        proofLink.classList.add('hidden')
-    }
-
-    document.getElementById('detail-modal').classList.remove('hidden')
-}
-
-window.closeDetailModal = function() {
-    document.getElementById('detail-modal').classList.add('hidden')
-    currentOrderId = null
-}
-
-window.saveProof = async function() {
-    const url = document.getElementById('modal-proof-input').value.trim()
-    if (!url) return
-
-    const { error } = await supabase
-        .from('orders')
-        .update({ proof_url: url })
-        .eq('id', currentOrderId)
-
-    if (!error) {
-        const idx = orders.findIndex(o => o.id === currentOrderId)
-        orders[idx].proof_url = url
-
-        const proofLink = document.getElementById('modal-proof-link')
-        const proofUrl  = document.getElementById('modal-proof-url')
-        proofLink.classList.remove('hidden')
-        proofUrl.href = url
-
-        showToast('Proof link disimpan!')
-        renderOrders()
-    }
-}
-
-window.updateStatus = async function(status) {
-    const { error } = await supabase
-        .from('orders')
-        .update({ status })
-        .eq('id', currentOrderId)
-
-    if (!error) {
-        const idx = orders.findIndex(o => o.id === currentOrderId)
-        orders[idx].status = status
-        showToast('Status diupdate!')
-        closeDetailModal()
-        updateStats()
-        renderOrders()
-    }
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetailModal() })
-document.addEventListener('DOMContentLoaded', init)
+})

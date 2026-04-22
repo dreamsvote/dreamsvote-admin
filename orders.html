@@ -5,14 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DreamsVote | Orders</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter','sans-serif'], display: ['Space Grotesk','sans-serif'] },
-                    colors: { primary:'#8B5CF6', secondary:'#EC4899', accent:'#3B82F6', dark:'#0F172A', darker:'#020617', surface:'#1E293B' }
+                    fontFamily: { sans: ['Inter','sans-serif'], display: ['Outfit','sans-serif'] },
+                    colors: { 
+                        primary: '#8A2A2B',
+                        'primary-hover': '#702223',
+                        'primary-light': 'rgba(138, 42, 43, 0.05)',
+                        surface: '#FFFFFF',
+                        background: '#F8FAFC',
+                        border: '#E2E8F0',
+                        'text-main': '#1E293B',
+                        'text-muted': '#64748B'
+                    }
                 }
             }
         }
@@ -20,221 +30,161 @@
     <link rel="stylesheet" href="shared.css">
     <link rel="stylesheet" href="orders.css">
 </head>
-<body class="min-h-screen flex">
+<body class="bg-background text-text-main min-h-screen flex">
 
     <!-- Sidebar -->
-    <aside class="w-64 glass border-r border-white/10 fixed h-full z-40 hidden md:flex flex-col">
-        <div class="p-6 border-b border-white/10">
+    <aside class="w-72 bg-surface border-r border-border fixed h-full z-40 hidden lg:flex flex-col">
+        <div class="p-8">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold shadow-lg">DV</div>
-                <div><h1 class="font-display font-bold text-lg">DreamsVote</h1><p class="text-xs text-gray-400">Admin Panel</p></div>
+                <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                    <i data-lucide="vote" class="text-white w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-xl tracking-tight text-primary">DreamsVote</h1>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">Admin Console</p>
+                </div>
             </div>
         </div>
-        <nav class="flex-1 py-6 space-y-1 overflow-y-auto custom-scrollbar">
-            <a href="dashboard.html" id="nav-dashboard" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-chart-line w-5"></i><span>Dashboard</span></a>
-            <a href="products.html"  id="nav-products"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-box w-5"></i><span>Products</span></a>
-            <a href="vouchers.html"  id="nav-vouchers"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-ticket w-5"></i><span>Vouchers</span></a>
-            <a href="orders.html"    id="nav-orders"    class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-shopping-cart w-5"></i><span>Orders</span></a>
-            <a href="schedule.html"  id="nav-schedule"  class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-calendar-days w-5"></i><span>Schedule</span></a>
-            <a href="customers.html" id="nav-customers" class="sidebar-link flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white"><i class="fa-solid fa-users w-5"></i><span>Customers</span></a>
+
+        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+            <div class="px-4 py-2 text-[11px] font-bold text-text-muted uppercase tracking-wider">Main Menu</div>
+            <a href="dashboard.html" id="nav-dashboard" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span>
+            </a>
+            <a href="products.html" id="nav-products" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="package" class="w-5 h-5"></i><span>Products</span>
+            </a>
+            <a href="vouchers.html" id="nav-vouchers" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="ticket" class="w-5 h-5"></i><span>Vouchers</span>
+            </a>
+            
+            <div class="px-4 py-6 text-[11px] font-bold text-text-muted uppercase tracking-wider">Management</div>
+            <a href="orders.html" id="nav-orders" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i><span>Orders</span>
+            </a>
+            <a href="schedule.html" id="nav-schedule" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="calendar" class="w-5 h-5"></i><span>Schedule</span>
+            </a>
+            <a href="customers.html" id="nav-customers" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl">
+                <i data-lucide="users" class="w-5 h-5"></i><span>Customers</span>
+            </a>
         </nav>
-        <div class="p-6 border-t border-white/10">
-            <div class="flex items-center gap-3 mb-4">
-                <img src="https://ui-avatars.com/api/?name=Admin&background=8B5CF6&color=fff" class="w-10 h-10 rounded-full">
-                <div><p class="font-medium text-sm">Administrator</p><p class="text-xs text-gray-400">admin@dreamsvote.com</p></div>
-            </div>
-            <button onclick="logout()" class="w-full py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition text-sm font-medium">
-                <i class="fa-solid fa-sign-out-alt mr-2"></i>Logout
+
+        <div class="p-6 border-t border-border bg-background/50">
+            <button onclick="logout()" class="w-full py-2.5 rounded-xl bg-white border border-border text-red-600 hover:bg-red-50 hover:border-red-100 transition-all text-sm font-semibold flex items-center justify-center gap-2">
+                <i data-lucide="log-out" class="w-4 h-4"></i>Logout
             </button>
         </div>
     </aside>
 
-    <!-- Mobile Header -->
-    <div class="md:hidden fixed top-0 w-full glass border-b border-white/10 z-30 px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-sm">DV</div>
-            <span class="font-display font-bold">DreamsVote</span>
-        </div>
-        <button onclick="toggleMobileMenu()" class="p-2"><i class="fa-solid fa-bars text-xl"></i></button>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-darker/95 backdrop-blur-lg hidden md:hidden pt-16">
-        <div class="p-4 space-y-2">
-            <a href="dashboard.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Dashboard</a>
-            <a href="products.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Products</a>
-            <a href="vouchers.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Vouchers</a>
-            <a href="orders.html"    class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Orders</a>
-            <a href="schedule.html"  class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Schedule</a>
-            <a href="customers.html" class="block p-4 rounded-xl bg-white/5 hover:bg-white/10">Customers</a>
-            <button onclick="logout()" class="w-full p-4 rounded-xl bg-red-500/10 text-red-400 text-left">Logout</button>
-        </div>
-    </div>
-
     <!-- Main Content -->
-    <main class="flex-1 md:ml-64 pt-16 md:pt-0">
-        <div class="p-6 md:p-8 fade-in">
+    <main class="flex-1 lg:ml-72 transition-all duration-300">
+        <!-- Top Header -->
+        <header class="h-20 bg-surface/80 backdrop-blur-md border-b border-border sticky top-0 z-30 px-8 flex items-center justify-between">
+            <div class="hidden lg:flex items-center gap-2 text-sm text-text-muted">
+                <span>Management</span>
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                <span class="text-text-main font-medium">Orders</span>
+            </div>
 
-            <!-- Header -->
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h2 class="font-display text-3xl font-bold mb-1">Orders</h2>
-                    <p class="text-gray-400">Kelola dan proses pesanan masuk</p>
+            <div class="relative w-96">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted"></i>
+                <input type="text" id="order-search" placeholder="Search Order ID or Customer name..." class="input-field w-full pl-12 pr-4 py-2.5 rounded-xl text-sm">
+            </div>
+        </header>
+
+        <div class="p-8 fade-in">
+            <div class="mb-10">
+                <h2 class="font-display text-3xl font-bold text-text-main tracking-tight mb-2">Order Management</h2>
+                <p class="text-text-muted">Track sales and validate payment proofs.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <div class="card-premium p-6 border-l-4 border-l-primary">
+                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Total Orders</p>
+                    <h3 class="text-2xl font-bold text-text-main" id="stat-total-orders">0</h3>
                 </div>
-                <div class="flex gap-3">
-                    <div class="relative">
-                        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                        <input type="text" id="search-input" placeholder="Cari order..." oninput="filterOrders()"
-                            class="input-field pl-9 pr-4 py-2 rounded-lg text-sm w-52">
+                <div class="card-premium p-6 border-l-4 border-l-amber-500">
+                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Pending</p>
+                    <h3 class="text-2xl font-bold text-text-main" id="stat-pending-orders">0</h3>
+                </div>
+                <div class="card-premium p-6 border-l-4 border-l-green-500">
+                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Completed</p>
+                    <h3 class="text-2xl font-bold text-text-main" id="stat-completed-orders">0</h3>
+                </div>
+                <div class="card-premium p-6 border-l-4 border-l-red-500">
+                    <p class="text-text-muted text-[10px] font-bold uppercase tracking-wider mb-1">Proof Needed</p>
+                    <h3 class="text-2xl font-bold text-text-main" id="stat-proof-needed">0</h3>
+                </div>
+            </div>
+
+            <!-- Table Card -->
+            <div class="card-premium overflow-hidden">
+                <div class="p-6 border-b border-border flex justify-between items-center bg-background/30">
+                    <div class="flex gap-4">
+                        <button class="px-5 py-2 rounded-lg bg-primary text-white text-xs font-bold shadow-lg shadow-primary/20">All Orders</button>
+                        <button class="px-5 py-2 rounded-lg bg-white border border-border text-text-muted hover:text-primary text-xs font-bold transition-all">Unpaid</button>
                     </div>
+                    <button class="text-text-muted hover:text-primary transition-colors">
+                        <i data-lucide="filter" class="w-5 h-5"></i>
+                    </button>
                 </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="glass rounded-xl p-4 border border-white/5">
-                    <p class="text-xs text-gray-400 mb-1">Total Orders</p>
-                    <p class="text-2xl font-bold" id="stat-total">0</p>
-                </div>
-                <div class="glass rounded-xl p-4 border border-white/5">
-                    <p class="text-xs text-yellow-400 mb-1">Pending</p>
-                    <p class="text-2xl font-bold text-yellow-400" id="stat-pending">0</p>
-                </div>
-                <div class="glass rounded-xl p-4 border border-white/5">
-                    <p class="text-xs text-green-400 mb-1">Completed</p>
-                    <p class="text-2xl font-bold text-green-400" id="stat-completed">0</p>
-                </div>
-                <div class="glass rounded-xl p-4 border border-white/5">
-                    <p class="text-xs text-red-400 mb-1">Proof Belum Upload</p>
-                    <p class="text-2xl font-bold text-red-400" id="stat-noproof">0</p>
-                </div>
-            </div>
-
-            <!-- Filter Tabs -->
-            <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
-                <button class="filter-tab active" onclick="setFilter('all', this)">All</button>
-                <button class="filter-tab" onclick="setFilter('pending', this)">Pending</button>
-                <button class="filter-tab" onclick="setFilter('waiting_payment', this)">Waiting Payment</button>
-                <button class="filter-tab" onclick="setFilter('paid', this)">Paid</button>
-                <button class="filter-tab" onclick="setFilter('processing', this)">Processing</button>
-                <button class="filter-tab" onclick="setFilter('completed', this)">Completed</button>
-                <button class="filter-tab" onclick="setFilter('cancelled', this)">Cancelled</button>
-            </div>
-
-            <!-- Table -->
-            <div class="glass rounded-2xl border border-white/5 overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-white/5 text-gray-400 text-xs uppercase">
+                    <table class="w-full text-left">
+                        <thead class="bg-background text-text-muted text-[10px] uppercase tracking-widest font-bold">
                             <tr>
-                                <th class="px-4 py-4">Order ID</th>
-                                <th class="px-4 py-4">Customer</th>
-                                <th class="px-4 py-4">Total</th>
-                                <th class="px-4 py-4">Status</th>
-                                <th class="px-4 py-4">Upload Proof</th>
-                                <th class="px-4 py-4">Proof</th>
-                                <th class="px-4 py-4">Tanggal</th>
-                                <th class="px-4 py-4">Aksi</th>
+                                <th class="px-8 py-4">Order ID</th>
+                                <th class="px-8 py-4">Customer</th>
+                                <th class="px-8 py-4">Total</th>
+                                <th class="px-8 py-4">Status</th>
+                                <th class="px-8 py-4">Payment</th>
+                                <th class="px-8 py-4">Date</th>
+                                <th class="px-8 py-4">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-white/5" id="orders-tbody">
-                            <tr>
-                                <td colspan="8" class="px-4 py-12 text-center text-gray-400">
-                                    <i class="fa-solid fa-box-open text-5xl mb-4 block text-gray-600"></i>
-                                    Loading orders...
-                                </td>
-                            </tr>
+                        <tbody class="divide-y divide-border text-sm" id="order-table-body">
+                            <!-- Dynamic rows -->
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
     </main>
 
     <!-- Order Detail Modal -->
-    <div id="detail-modal" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeDetailModal()"></div>
-        <div class="absolute inset-0 flex items-center justify-center p-4">
-            <div class="glass rounded-3xl p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto custom-scrollbar">
-                <button onclick="closeDetailModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
-                    <i class="fa-solid fa-xmark"></i>
+    <div id="order-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-text-main/20 backdrop-blur-sm" onclick="closeOrderModal()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-2xl w-full bg-surface shadow-2xl flex flex-col fade-in">
+            <div class="p-8 border-b border-border flex justify-between items-center">
+                <h3 class="font-display text-2xl font-bold text-text-main" id="modal-order-id">Order Details</h3>
+                <button onclick="closeOrderModal()" class="w-10 h-10 rounded-xl hover:bg-background flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="w-5 h-5 text-text-muted"></i>
                 </button>
-                <h3 class="font-display text-2xl font-bold mb-2" id="modal-order-id">-</h3>
-                <p class="text-gray-400 text-sm mb-6" id="modal-order-date">-</p>
+            </div>
+            
+            <div id="order-details-content" class="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
+                <!-- Dynamic content -->
+            </div>
 
-                <!-- Customer Info -->
-                <div class="glass rounded-xl p-4 mb-4 border border-white/5">
-                    <p class="text-xs text-gray-400 uppercase mb-3">Customer</p>
-                    <div class="detail-row"><span class="detail-label">Nama</span><span class="detail-value" id="modal-customer-name">-</span></div>
-                    <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value" id="modal-customer-email">-</span></div>
-                    <div class="detail-row"><span class="detail-label">WhatsApp</span><span class="detail-value" id="modal-customer-wa">-</span></div>
-                </div>
-
-                <!-- Order Items -->
-                <div class="glass rounded-xl p-4 mb-4 border border-white/5">
-                    <p class="text-xs text-gray-400 uppercase mb-3">Items</p>
-                    <div id="modal-items" class="space-y-2"></div>
-                    <div class="pt-3 mt-3 border-t border-white/10 flex justify-between">
-                        <span class="text-gray-400">Subtotal</span>
-                        <span class="font-bold" id="modal-subtotal">-</span>
-                    </div>
-                    <div class="flex justify-between" id="modal-discount-row">
-                        <span class="text-gray-400">Diskon</span>
-                        <span class="text-green-400 font-bold" id="modal-discount">-</span>
-                    </div>
-                    <div class="flex justify-between text-lg font-bold mt-1">
-                        <span>Total</span>
-                        <span class="text-primary" id="modal-total">-</span>
-                    </div>
-                </div>
-
-                <!-- Schedule -->
-                <div class="glass rounded-xl p-4 mb-4 border border-white/5" id="modal-schedule-section">
-                    <p class="text-xs text-gray-400 uppercase mb-3">Jadwal Vote</p>
-                    <div class="detail-row"><span class="detail-label">Tanggal</span><span class="detail-value" id="modal-sched-date">-</span></div>
-                    <div class="detail-row"><span class="detail-label">Waktu KST</span><span class="detail-value" id="modal-sched-kst">-</span></div>
-                    <div class="detail-row"><span class="detail-label">Waktu WIB</span><span class="detail-value" id="modal-sched-wib">-</span></div>
-                </div>
-
-                <!-- Proof -->
-                <div class="glass rounded-xl p-4 mb-6 border border-white/5">
-                    <p class="text-xs text-gray-400 uppercase mb-3">Proof Link</p>
-                    <div class="flex gap-2">
-                        <input type="url" id="modal-proof-input" placeholder="https://drive.google.com/..."
-                            class="input-field flex-1 px-3 py-2 rounded-lg text-sm text-white">
-                        <button onclick="saveProof()" class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/80 text-sm font-medium transition">
-                            Simpan
-                        </button>
-                    </div>
-                    <div id="modal-proof-link" class="mt-2 hidden">
-                        <a id="modal-proof-url" href="#" target="_blank"
-                            class="text-sm text-primary hover:text-secondary transition flex items-center gap-2">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            <span>Open Proof</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Status Update -->
-                <div class="flex gap-2 flex-wrap">
-                    <button onclick="updateStatus('waiting_payment')" class="flex-1 py-2 rounded-xl bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 text-xs font-medium transition">Waiting Payment</button>
-                    <button onclick="updateStatus('paid')"            class="flex-1 py-2 rounded-xl bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 text-xs font-medium transition">Paid</button>
-                    <button onclick="updateStatus('processing')"      class="flex-1 py-2 rounded-xl bg-pink-500/20 text-pink-400 hover:bg-pink-500/30 text-xs font-medium transition">Processing</button>
-                    <button onclick="updateStatus('completed')"       class="flex-1 py-2 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500/30 text-xs font-medium transition">Completed</button>
-                    <button onclick="updateStatus('cancelled')"       class="flex-1 py-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs font-medium transition">Cancelled</button>
-                </div>
+            <div class="p-8 border-t border-border bg-background/50 flex gap-4" id="modal-actions">
+                <!-- Action buttons -->
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-8 right-8 glass px-6 py-4 rounded-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
-        <i class="fa-solid fa-check-circle text-primary text-xl"></i>
-        <span id="toast-message" class="font-medium"></span>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 right-8 px-6 py-4 rounded-2xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-500 z-50">
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+            <i data-lucide="check" class="text-white w-4 h-4"></i>
+        </div>
+        <span id="toast-message" class="font-bold text-sm"></span>
     </div>
 
     <script type="module" src="shared.js"></script>
     <script type="module" src="orders.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
