@@ -119,16 +119,6 @@ export async function updateOrderStatus(id, status) {
     return data
 }
 
-export async function createOrder(orderData) {
-    const { data, error } = await supabase
-        .from('orders')
-        .insert([orderData])
-        .select()
-        .single()
-    if (error) console.error('createOrder error:', error)
-    return data
-}
-
 // ================================================
 // CUSTOMERS
 // ================================================
@@ -144,12 +134,25 @@ export async function getCustomers() {
 }
 
 // ================================================
+// PAYMENT ACCOUNTS
+// ================================================
+
+export async function getPaymentAccounts() {
+    const { data, error } = await supabase
+        .from('payment_accounts')
+        .select('*')
+        .eq('is_active', true)
+    if (error) console.error('getPaymentAccounts error:', error)
+    return data || []
+}
+
+// ================================================
 // DASHBOARD STATS
 // ================================================
 
 export async function getDashboardStats() {
     const [ordersRes, usersRes, productsRes] = await Promise.all([
-        supabase.from('orders').select('total, currency, status, created_at'),
+        supabase.from('orders').select('total, status, created_at'),
         supabase.from('users').select('id, created_at').eq('role', 'customer'),
         supabase.from('products').select('sold')
     ])
@@ -158,20 +161,15 @@ export async function getDashboardStats() {
     const users    = usersRes.data    || []
     const products = productsRes.data || []
 
-    // Calculate revenue per currency
-    const revenueUSD = orders
-        .filter(o => o.status === 'completed' && (o.currency === 'USD' || o.currency === '$'))
-        .reduce((sum, o) => sum + parseFloat(o.total), 0)
-
-    const revenueIDR = orders
-        .filter(o => o.status === 'completed' && (o.currency === 'IDR' || o.currency === 'Rp'))
+    const totalRevenue = orders
+        .filter(o => o.status === 'completed')
         .reduce((sum, o) => sum + parseFloat(o.total), 0)
 
     const totalOrders    = orders.length
     const totalCustomers = users.length
     const totalVotesSold = products.reduce((sum, p) => sum + (p.sold || 0), 0)
 
-    return { revenueUSD, revenueIDR, totalOrders, totalCustomers, totalVotesSold }
+    return { totalRevenue, totalOrders, totalCustomers, totalVotesSold }
 }
 
 // ================================================
@@ -179,10 +177,32 @@ export async function getDashboardStats() {
 // ================================================
 
 supabase.auth.onAuthStateChange((event, session) => {
+    console.log('Auth event:', event)
+    
     if (event === 'SIGNED_OUT') {
+        // Pastikan redirect ke login kalau sign out
         const currentPage = window.location.pathname.split('/').pop()
         if (currentPage !== 'login.html' && currentPage !== '') {
             window.location.replace('login.html')
         }
     }
+    
+    if (event === 'TOKEN_REFRESHED') {
+        console.log('Token refreshed successfully')
+    }
 })
+
+
+// ================================================
+// ORDERS
+// ================================================
+
+export async function createOrder(orderData) {
+    const { data, error } = await supabase
+        .from('orders')
+        .insert([orderData])
+        .select()
+        .single()
+    if (error) console.error('createOrder error:', error)
+    return data
+}

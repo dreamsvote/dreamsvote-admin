@@ -1,77 +1,152 @@
-import { supabase, getVouchers, createVoucher, deleteVoucher } from './supabase.js'
+import { supabase } from './supabase.js'
+import { getVouchers, createVoucher, deleteVoucher } from './supabase.js'
 
 let vouchers = []
 
-// --- BIND TO WINDOW IMMEDIATELY ---
-window.openVoucherModal = () => document.getElementById('voucher-modal').classList.remove('hidden')
-window.closeVoucherModal = () => document.getElementById('voucher-modal').classList.add('hidden')
-
-window.saveVoucher = async (e) => {
-    if (e) e.preventDefault()
-    const data = {
-        code: document.getElementById('voucher-code').value.toUpperCase(),
-        type: document.getElementById('voucher-type').value,
-        value: parseFloat(document.getElementById('voucher-value').value),
-        min_order: parseFloat(document.getElementById('voucher-min-order').value),
-        max_uses: parseInt(document.getElementById('voucher-max-uses').value) || null,
-        expiry_date: document.getElementById('voucher-expiry').value,
-        usage: 0
+// ============================================
+// AUTH CHECK & INIT
+// ============================================
+async function init() {
+    // Cek auth dulu
+    const { data } = await supabase.auth.getSession()
+    if (!data.session) {
+        window.location.replace('login.html')
+        return
     }
     
-    const btn = document.querySelector('#voucher-form button[type="submit"]')
-    if (btn) btn.disabled = true
+    // Highlight nav
+    highlightActiveNav()
     
-    const created = await createVoucher(data)
-    if (created) {
-        vouchers.push(created)
-        renderVouchers()
-        window.closeVoucherModal()
-        showToast('Voucher created!')
-    }
-    if (btn) btn.disabled = false
+    // Load data
+    vouchers = await getVouchers()
+    renderVouchers()
+    updateStats()
 }
 
-window.confirmDeleteVoucher = async (id) => {
-    if (confirm('Delete this voucher?')) {
+// ============================================
+// HIGHLIGHT ACTIVE NAV
+// ============================================
+function highlightActiveNav() {
+    const page = window.location.pathname.split('/').pop().replace('.html', '')
+    const navEl = document.getElementById('nav-' + page)
+    if (navEl) {
+        navEl.classList.add('active')
+        navEl.classList.remove('text-gray-300')
+    }
+}
+
+// ... rest of the code (renderVouchers, modal functions, etc.)
+
+// ============================================
+// RENDER VOUCHERS
+// ============================================
+function renderVouchers() {
+    const tbody = document.getElementById('vouchers-table-body')
+    if (!vouchers.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-400">Belum ada voucher</td></tr>`
+        return
+    }
+    tbody.innerHTML = vouchers.map(v => {
+        const isExpired = new Date(v.expiry) < new Date() || (v.max_uses && v.used >= v.max_uses)
+        const statusClass = isExpired ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'
+        return `
+            <tr class="hover:bg-white/5 transition">
+                <td class="px-6 py-4 font-mono font-bold text-primary">${v.code}</td>
+                <td class="px-6 py-4 capitalize">${v.type}</td>
+                <td class="px-6 py-4 font-bold">${v.type === 'percentage' ? v.value + '%' : '$' + v.value}</td>
+                <td class="px-6 py-4">${v.used}${v.max_uses ? '/' + v.max_uses : ''}</td>
+                <td class="px-6 py-4 text-gray-400">${v.expiry}</td>
+                <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs ${statusClass}">${isExpired ? 'Expired' : 'Active'}</span></td>
+                <td class="px-6 py-4">
+                    <button onclick="confirmDeleteVoucher(${v.id})" class="text-red-400 hover:text-red-300 transition">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `
+    }).join('')
+}
+
+// ============================================
+// MODAL FUNCTIONS
+// ============================================
+window.openVoucherModal = function() {
+    document.getElementById('voucher-modal').classList.remove('hidden')
+    document.getElementById('voucher-expiry').valueAsDate = new Date(Date.now() + 30*24*60*60*1000)
+}
+
+window.closeVoucherModal = function() {
+    document.getElementById('voucher-modal').classList.add('hidden')
+    document.getElementById('voucher-form').reset()
+}
+
+window.generateCode = function() {
+    document.getElementById('voucher-code').value = 'DV' + Math.random().toString(36).substring(2, 8).toUpperCase()
+}
+
+// ============================================
+// SAVE & DELETE
+// ============================================
+window.saveVoucher = async function(e) {
+    e.preventDefault()
+    const btn = e.submitter
+    btn.disabled = true
+    btn.textContent = 'Saving...'
+
+    const newVoucher = {
+        code:     document.getElementById('voucher-code').value.toUpperCase(),
+        type:     document.getElementById('voucher-type').value,
+        value:    parseFloat(document.getElementById('voucher-value').value),
+        used:     0,
+        max_uses: document.getElementById('voucher-max').value ? parseInt(document.getElementById('voucher-max').value) : null,
+        expiry:   document.getElementById('voucher-expiry').value,
+        status:   'active'
+    }
+
+    const created = await createVoucher(newVoucher)
+    if (created) { 
+        vouchers.push(created)
+        showToast('Voucher created!')
+    }
+
+    btn.disabled = false
+    btn.textContent = 'Create Voucher'
+    closeVoucherModal()
+    renderVouchers()
+}
+
+window.confirmDeleteVoucher = async function(id) {
+    if (confirm('Hapus voucher ini?')) {
         const ok = await deleteVoucher(id)
-        if (ok) {
+        if (ok) { 
             vouchers = vouchers.filter(v => v.id !== id)
             renderVouchers()
-            showToast('Deleted!')
+            showToast('Voucher deleted!')
         }
     }
 }
 
-// --- RENDERING ---
-function renderVouchers() {
-    const tbody = document.getElementById('voucher-table-body')
-    if (!tbody) return
-    if (!vouchers.length) {
-        tbody.innerHTML = `<tr><td colspan="7" class="px-8 py-10 text-center text-text-muted italic text-xs">No vouchers active</td></tr>`
-        return
-    }
-    tbody.innerHTML = vouchers.map(v => `
-        <tr class="hover:bg-primary-light/30 transition-all">
-            <td class="px-8 py-4"><span class="font-bold text-primary bg-primary-light px-2 py-1 rounded text-xs">${v.code}</span></td>
-            <td class="px-8 py-4 text-xs font-bold text-text-muted uppercase">${v.type}</td>
-            <td class="px-8 py-4 font-bold">${v.type==='percentage'?v.value+'%':'$'+v.value}</td>
-            <td class="px-8 py-4 text-xs">${v.usage||0}/${v.max_uses||'∞'}</td>
-            <td class="px-8 py-4 text-xs">${v.expiry_date}</td>
-            <td class="px-8 py-4">
-                <span class="px-2 py-1 rounded-full text-[9px] font-bold uppercase ${new Date(v.expiry_date)>new Date()?'bg-green-50 text-green-600':'bg-red-50 text-red-600'}">
-                    ${new Date(v.expiry_date)>new Date()?'Active':'Expired'}
-                </span>
-            </td>
-            <td class="px-8 py-4"><button onclick="confirmDeleteVoucher(${v.id})" class="text-text-muted hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
-        </tr>
-    `).join('')
-    if (window.lucide) lucide.createIcons()
-}
-
-// --- INIT ---
-document.addEventListener('DOMContentLoaded', async () => {
-    const { data } = await supabase.auth.getSession()
-    if (!data.session) return window.location.replace('login.html')
-    vouchers = await getVouchers()
-    renderVouchers()
+// ============================================
+// EVENT LISTENERS
+// ============================================
+document.addEventListener('keydown', e => { 
+    if (e.key === 'Escape') closeVoucherModal() 
 })
+
+document.addEventListener('DOMContentLoaded', init)
+
+// ============================================
+// UPDATE STATS
+// ============================================
+function updateStats() {
+    const now = new Date()
+    const active  = vouchers.filter(v => new Date(v.expiry) >= now && !(v.max_uses && v.used >= v.max_uses))
+    const expired = vouchers.filter(v => new Date(v.expiry) < now  ||  (v.max_uses && v.used >= v.max_uses))
+
+    const el1 = document.getElementById('stat-active')
+    const el2 = document.getElementById('stat-expired')
+
+    if (el1) el1.textContent = active.length
+    if (el2) el2.textContent = expired.length
+    // stat-discounted tidak bisa dihitung dari vouchers saja, butuh data orders
+}
