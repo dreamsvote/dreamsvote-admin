@@ -15,21 +15,11 @@ window.selectDate = async (date) => {
     renderCalendar()
     const display = document.getElementById('selected-date-display')
     if (display) display.textContent = new Date(date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
-    
-    const status = document.getElementById('date-status-display')
-    if (status) status.textContent = 'Loading slots...'
-    
-    const btn = document.getElementById('add-slot-btn')
-    if (btn) btn.disabled = false
-    
     loadSlots(date)
 }
 
 window.openSlotModal = () => selectedDate ? document.getElementById('slot-modal').classList.remove('hidden') : alert('Select a date first')
 window.closeSlotModal = () => document.getElementById('slot-modal').classList.add('hidden')
-
-window.selectAllTimes = () => document.querySelectorAll('.kst-check').forEach(c => c.checked = true)
-window.clearAllTimes = () => document.querySelectorAll('.kst-check').forEach(c => c.checked = false)
 
 window.saveTimeSlot = async (e) => {
     if (e) e.preventDefault()
@@ -49,48 +39,32 @@ window.saveTimeSlot = async (e) => {
     if (error) {
         alert('Error: ' + error.message)
     } else {
-        showToast('Slots added successfully!')
+        window.showToast('Slots added!')
         window.closeSlotModal()
         loadSlots(selectedDate)
     }
 }
 
-// PERBAIKAN: Fungsi toggle dan delete sekarang lebih kuat
 window.toggleSlot = async function(id, isActive) {
-    try {
-        const { error } = await supabase
-            .from('schedule_slots')
-            .update({ is_active: isActive })
-            .eq('id', id)
-        
-        if (error) throw error
-        showToast(`Slot is now ${isActive ? 'Active' : 'Disabled'}`)
-        
-        // Update data lokal
-        const idx = slots.findIndex(s => s.id === id)
-        if (idx !== -1) slots[idx].is_active = isActive
-        renderSlots()
-    } catch (err) {
-        console.error('Toggle error:', err)
-        showToast('Failed to update slot', 'error')
+    const { error } = await supabase.from('schedule_slots').update({ is_active: isActive }).eq('id', id)
+    if (error) {
+        console.error(error)
+        window.showToast('Failed to update', 'error')
+    } else {
+        window.showToast(`Slot ${isActive ? 'Active' : 'Disabled'}`)
+        loadSlots(selectedDate)
     }
 }
 
 window.deleteSlot = async function(id) {
-    if (!confirm('Are you sure you want to delete this slot?')) return
-    try {
-        const { error } = await supabase
-            .from('schedule_slots')
-            .delete()
-            .eq('id', id)
-        
-        if (error) throw error
-        showToast('Slot deleted')
-        slots = slots.filter(s => s.id !== id)
-        renderSlots()
-    } catch (err) {
-        console.error('Delete error:', err)
-        showToast('Failed to delete slot', 'error')
+    if (!confirm('Delete this slot?')) return
+    const { error } = await supabase.from('schedule_slots').delete().eq('id', id)
+    if (error) {
+        console.error(error)
+        window.showToast('Failed to delete', 'error')
+    } else {
+        window.showToast('Slot deleted')
+        loadSlots(selectedDate)
     }
 }
 
@@ -112,45 +86,35 @@ function renderCalendar() {
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
         const isSelected = selectedDate === dateStr
-        grid.innerHTML += `<button onclick="selectDate('${dateStr}')" class="aspect-square rounded-xl text-xs font-bold transition-all ${isSelected ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'hover:bg-primary-light text-text-main'}">${day}</button>`
+        grid.innerHTML += `<button onclick="window.selectDate('${dateStr}')" class="aspect-square rounded-xl text-xs font-bold transition-all ${isSelected ? 'bg-primary text-white shadow-lg' : 'hover:bg-primary-light text-text-main'}">${day}</button>`
     }
 }
 
 async function loadSlots(date) {
-    const { data, error } = await supabase
-        .from('schedule_slots')
-        .select('*')
-        .eq('date', date)
-        .order('time_kst', { ascending: true })
-    
+    const { data } = await supabase.from('schedule_slots').select('*').eq('date', date).order('time_kst', { ascending: true })
     slots = data || []
-    const status = document.getElementById('date-status-display')
-    if (status) status.textContent = slots.length > 0 ? 'Manage slots for this date' : 'No slots found for this date'
-    
     renderSlots()
 }
 
 function renderSlots() {
     const container = document.getElementById('time-slots-container')
-    const totalEl = document.getElementById('total-slots')
     if (!container) return
-    if (totalEl) totalEl.textContent = `${slots.length} SLOTS`
     
     if (!slots.length) {
-        container.innerHTML = `<div class="col-span-full py-16 text-center text-text-muted text-xs opacity-50 flex flex-col items-center justify-center"><i data-lucide="clock" class="w-10 h-10 mb-4"></i><p>No slots found for this date</p></div>`
+        container.innerHTML = `<div class="col-span-full py-16 text-center text-text-muted text-xs opacity-50">No slots found</div>`
     } else {
         container.innerHTML = slots.map(s => `
-            <div class="p-4 rounded-2xl border ${s.is_active ? 'border-border bg-white shadow-sm' : 'border-red-100 bg-red-50/20 opacity-80'} flex justify-between items-center transition-all">
-                <div class="${!s.is_active ? 'grayscale' : ''}">
-                    <p class="text-sm font-bold text-text-main">${s.time_kst.substring(0,5)} KST</p>
-                    <p class="text-[10px] font-bold text-text-muted uppercase">${s.time_wib.substring(0,5)} WIB</p>
+            <div class="p-4 rounded-2xl border ${s.is_active ? 'border-border bg-white shadow-sm' : 'border-red-100 bg-red-50/20'} flex justify-between items-center">
+                <div>
+                    <p class="text-sm font-bold ${s.is_active ? 'text-text-main' : 'text-text-muted'}">${s.time_kst.substring(0,5)} KST</p>
+                    <p class="text-[10px] font-bold text-text-muted">${s.time_wib.substring(0,5)} WIB</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" ${s.is_active ? 'checked' : ''} onchange="toggleSlot(${s.id}, this.checked)" class="sr-only peer">
-                        <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                        <input type="checkbox" ${s.is_active ? 'checked' : ''} onchange="window.toggleSlot(${s.id}, this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
                     </label>
-                    <button onclick="deleteSlot(${s.id})" class="text-text-muted hover:text-red-600 transition-colors">
+                    <button onclick="window.deleteSlot(${s.id})" class="text-text-muted hover:text-red-600">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -159,6 +123,9 @@ function renderSlots() {
     }
     if (window.lucide) lucide.createIcons()
 }
+
+window.selectAllTimes = () => document.querySelectorAll('.kst-check').forEach(c => c.checked = true)
+window.clearAllTimes = () => document.querySelectorAll('.kst-check').forEach(c => c.checked = false)
 
 function generateKSTCheckboxes() {
     const grid = document.getElementById('kst-checkbox-grid')
@@ -170,9 +137,8 @@ function generateKSTCheckboxes() {
         grid.innerHTML += `
             <label class="cursor-pointer group">
                 <input type="checkbox" value="${time}" data-wib="${wib}" class="peer sr-only kst-check">
-                <div class="p-3 rounded-xl border border-border bg-white text-center hover:border-primary transition-all peer-checked:bg-primary-light peer-checked:text-primary peer-checked:border-primary">
+                <div class="p-2 rounded-lg border border-border bg-white text-center peer-checked:bg-primary-light peer-checked:text-primary transition-all">
                     <p class="text-[10px] font-bold">${time}</p>
-                    <p class="text-[8px] font-medium text-text-muted opacity-60">${wib}</p>
                 </div>
             </label>
         `
